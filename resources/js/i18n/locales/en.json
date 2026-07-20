@@ -1,0 +1,62 @@
+{
+    "app": {
+        "name": "NetRoom",
+        "tagline": "Network documentation for IT departments"
+    },
+    "nav": {
+        "platform": "Platform",
+        "dashboard": "Dashboard",
+        "sites": "Sites",
+        "rooms": "Rooms",
+        "racks": "Racks",
+        "devices": "Devices",
+        "models": "Device models",
+        "vlans": "VLANs",
+        "cables": "Cabling",
+        "tunnels": "VPN tunnels",
+        "workplaces": "Workplaces",
+        "ipam": "IPAM",
+        "map": "Network map",
+        "admin": "Administration",
+        "users": "Users",
+        "audit": "Activity log",
+        "settings": "Settings",
+        "repository": "Repository",
+        "documentation": "Documentation"
+    },
+    "common": {
+        "create": "Create",
+        "edit": "Edit",
+        "delete": "Delete",
+        "save": "Save",
+        "cancel": "Cancel",
+        "confirm": "Confirm",
+        "search": "Search",
+        "actions": "Actions",
+        "name": "Name",
+        "description": "Description",
+        "notes": "Notes",
+        "status": "Status",
+        "type": "Type",
+        "empty": "Nothing here yet",
+        "loading": "Loading…",
+        "back": "Back"
+    },
+    "settings": {
+        "title": "Settings",
+        "description": "Manage your profile and account settings",
+        "profile": "Profile",
+        "password": "Password",
+        "appearance": "Appearance",
+        "language": "Interface language",
+        "languageDescription": "Choose the language the panel is displayed in"
+    },
+    "auth": {
+        "login": "Log in",
+        "logout": "Log out",
+        "email": "Email address",
+        "password": "Password",
+        "remember": "Remember me",
+        "forgot": "Forgot password?"
+    }
+}
