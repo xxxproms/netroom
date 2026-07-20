@@ -41,6 +41,16 @@ composer dev
 
 Accounts are created by an administrator — self-service registration is off by default. Set `NETROOM_ALLOW_REGISTRATION=true` in `.env` to open it up.
 
+### Demo data
+
+To look around a populated panel rather than an empty one:
+
+```bash
+php artisan db:seed --class=DemoSeeder
+```
+
+This builds a fictional estate — two neighbouring complexes sharing a VLAN plan, a town office, a factory and a cottage — with racks, switches, patch panels and documented ports. It also creates one account per role (`admin@`, `engineer@`, `tech@`, `viewer@example.com`, password `password`), so the access levels can be compared side by side. Meant for a scratch database, never a real one.
+
 ### Docker
 
 ```bash
