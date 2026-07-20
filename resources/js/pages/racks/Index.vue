@@ -49,7 +49,7 @@ defineOptions({
                         {{ t(`rack.kind.${rack.kind}`) }} · {{ rack.u_height }}U
                     </p>
                 </div>
-                <Badge variant="outline" class="font-mono text-[11px]">
+                <Badge variant="outline" class="font-mono text-xs">
                     {{ rack.site?.code }}
                 </Badge>
             </Link>

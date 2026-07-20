@@ -98,6 +98,7 @@ export type RackDevice = {
     face: string;
     position_u: number;
     status: string;
+    color: string | null;
     mgmt_ip: string | null;
     model: DeviceModelSummary;
 };
@@ -118,6 +119,7 @@ export type Device = {
     id: number;
     name: string;
     status: string;
+    color: string | null;
     position_u: number | null;
     mgmt_ip: string | null;
     mgmt_url?: string | null;

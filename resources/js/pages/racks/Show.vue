@@ -6,6 +6,7 @@ import { useI18n } from 'vue-i18n';
 import DeviceFormDialog from '@/components/devices/DeviceFormDialog.vue';
 import PageHeader from '@/components/PageHeader.vue';
 import RackElevation from '@/components/racks/RackElevation.vue';
+import RackScaleToggle from '@/components/racks/RackScaleToggle.vue';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { show as showDevice } from '@/routes/devices';
@@ -67,6 +68,7 @@ function addAt(position: number, face: string): void {
             :description="`${t(`rack.kind.${rack.kind}`)} · ${rack.u_height}U`"
         >
             <template #actions>
+                <RackScaleToggle />
                 <Link :href="showRoom(rack.room.id)">
                     <Badge variant="outline">{{ rack.room.name }}</Badge>
                 </Link>

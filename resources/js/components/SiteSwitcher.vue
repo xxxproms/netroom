@@ -70,7 +70,7 @@ function select(site: SiteSummary | null): void {
                 @select="select(option)"
             >
                 <span
-                    class="w-9 shrink-0 rounded bg-muted px-1 py-0.5 text-center font-mono text-[11px] text-muted-foreground"
+                    class="w-9 shrink-0 rounded bg-muted px-1 py-0.5 text-center font-mono text-xs text-muted-foreground"
                 >
                     {{ option.code }}
                 </span>

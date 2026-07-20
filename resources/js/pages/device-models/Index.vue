@@ -53,25 +53,25 @@ function remove(model: DeviceModel): void {
         <EmptyState v-if="!models.length" :message="t('model.empty')" />
 
         <div v-else class="overflow-x-auto rounded-xl border">
-            <table class="w-full text-sm">
-                <thead class="bg-muted/50 text-xs text-muted-foreground">
+            <table class="w-full text-[15px]">
+                <thead class="bg-muted/50 text-sm text-muted-foreground">
                     <tr>
-                        <th class="px-4 py-2.5 text-left font-medium">
+                        <th class="px-4 py-3 text-left font-medium">
                             {{ t('model.vendor') }}
                         </th>
-                        <th class="px-4 py-2.5 text-left font-medium">
+                        <th class="px-4 py-3 text-left font-medium">
                             {{ t('model.model') }}
                         </th>
-                        <th class="px-4 py-2.5 text-left font-medium">
+                        <th class="px-4 py-3 text-left font-medium">
                             {{ t('common.type') }}
                         </th>
-                        <th class="px-4 py-2.5 text-right font-medium">
+                        <th class="px-4 py-3 text-right font-medium">
                             {{ t('model.ports') }}
                         </th>
-                        <th class="px-4 py-2.5 text-right font-medium">U</th>
+                        <th class="px-4 py-3 text-right font-medium">U</th>
                         <th
                             v-if="can.manage"
-                            class="px-4 py-2.5 text-right font-medium"
+                            class="px-4 py-3 text-right font-medium"
                         >
                             {{ t('common.actions') }}
                         </th>
@@ -83,22 +83,22 @@ function remove(model: DeviceModel): void {
                         :key="model.id"
                         class="border-t"
                     >
-                        <td class="px-4 py-2.5 text-muted-foreground">
+                        <td class="px-4 py-3 text-muted-foreground">
                             {{ model.vendor }}
                         </td>
-                        <td class="px-4 py-2.5 font-medium">
+                        <td class="px-4 py-3 font-medium">
                             {{ model.model }}
                         </td>
-                        <td class="px-4 py-2.5">
+                        <td class="px-4 py-3">
                             <Badge variant="secondary">
                                 {{ t(`model.kind.${model.kind}`) }}
                             </Badge>
                         </td>
-                        <td class="px-4 py-2.5 text-right tabular-nums">
+                        <td class="px-4 py-3 text-right tabular-nums">
                             {{ model.port_count }}
                         </td>
                         <td
-                            class="px-4 py-2.5 text-right text-muted-foreground tabular-nums"
+                            class="px-4 py-3 text-right text-muted-foreground tabular-nums"
                         >
                             {{ model.u_height }}
                         </td>

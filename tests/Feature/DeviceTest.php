@@ -223,3 +223,37 @@ test('a port description can be changed but its identity cannot', function () {
     expect($port->refresh()->description)->toBe('Reception desk')
         ->and($port->name)->toBe('7');
 });
+
+test('a device can be given its own colour on the elevation', function () {
+    $device = Device::factory()->create(['site_id' => $this->site->id]);
+
+    $this->actingAs($this->engineer)
+        ->from("/devices/{$device->id}")
+        ->patch("/devices/{$device->id}", [
+            'device_model_id' => $device->device_model_id,
+            'site_id' => $device->site_id,
+            'face' => 'front',
+            'name' => $device->name,
+            'status' => 'active',
+            'color' => '#7c3aed',
+        ])
+        ->assertSessionHasNoErrors();
+
+    expect($device->refresh()->color)->toBe('#7c3aed');
+});
+
+test('a colour that is not a hex value is refused', function () {
+    $device = Device::factory()->create(['site_id' => $this->site->id]);
+
+    $this->actingAs($this->engineer)
+        ->from("/devices/{$device->id}")
+        ->patch("/devices/{$device->id}", [
+            'device_model_id' => $device->device_model_id,
+            'site_id' => $device->site_id,
+            'face' => 'front',
+            'name' => $device->name,
+            'status' => 'active',
+            'color' => 'purple',
+        ])
+        ->assertSessionHasErrors('color');
+});

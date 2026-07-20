@@ -78,24 +78,24 @@ function toggleUplink(port: Port): void {
         </h2>
 
         <div class="overflow-x-auto rounded-xl border">
-            <table class="w-full text-sm">
-                <thead class="bg-muted/50 text-xs text-muted-foreground">
+            <table class="w-full text-[15px]">
+                <thead class="bg-muted/50 text-sm text-muted-foreground">
                     <tr>
-                        <th class="w-16 px-4 py-2.5 text-left font-medium">
+                        <th class="w-16 px-4 py-3 text-left font-medium">
                             {{ t('port.number') }}
                         </th>
-                        <th class="w-28 px-4 py-2.5 text-left font-medium">
+                        <th class="w-28 px-4 py-3 text-left font-medium">
                             {{ t('model.media') }}
                         </th>
-                        <th class="w-24 px-4 py-2.5 text-right font-medium">
+                        <th class="w-24 px-4 py-3 text-right font-medium">
                             {{ t('model.speed') }}
                         </th>
-                        <th class="px-4 py-2.5 text-left font-medium">
+                        <th class="px-4 py-3 text-left font-medium">
                             {{ t('port.description') }}
                         </th>
                         <th
                             v-if="editable"
-                            class="w-24 px-4 py-2.5 text-right font-medium"
+                            class="w-24 px-4 py-3 text-right font-medium"
                         >
                             {{ t('common.actions') }}
                         </th>
@@ -108,14 +108,14 @@ function toggleUplink(port: Port): void {
                         class="border-t"
                         :class="{ 'opacity-50': !port.enabled }"
                     >
-                        <td class="px-4 py-2 font-mono">{{ port.name }}</td>
+                        <td class="px-4 py-2.5 font-mono">{{ port.name }}</td>
                         <td class="px-4 py-2">
-                            <Badge variant="outline" class="text-[11px]">
+                            <Badge variant="outline" class="text-xs">
                                 {{ t(`model.mediaKind.${port.media}`) }}
                             </Badge>
                         </td>
                         <td
-                            class="px-4 py-2 text-right text-muted-foreground tabular-nums"
+                            class="px-4 py-2.5 text-right text-muted-foreground tabular-nums"
                         >
                             {{ port.speed_mbps ?? '—' }}
                         </td>
@@ -159,7 +159,7 @@ function toggleUplink(port: Port): void {
                                 <Badge
                                     v-if="port.is_uplink"
                                     variant="secondary"
-                                    class="text-[11px]"
+                                    class="text-xs"
                                 >
                                     {{ t('port.uplink') }}
                                 </Badge>

@@ -33,6 +33,7 @@ class RackElevationController extends Controller
                 'face' => $device->face,
                 'position_u' => $device->position_u,
                 'status' => $device->status,
+                'color' => $device->color,
                 'mgmt_ip' => $device->mgmt_ip,
                 'model' => [
                     'vendor' => $device->deviceModel->vendor,

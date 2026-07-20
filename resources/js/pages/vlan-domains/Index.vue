@@ -109,7 +109,7 @@ const action = () =>
                         v-for="site in domain.sites"
                         :key="site.id"
                         variant="secondary"
-                        class="font-mono text-[11px]"
+                        class="font-mono text-xs"
                     >
                         {{ site.code }}
                     </Badge>

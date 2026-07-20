@@ -90,21 +90,21 @@ function remove(vlan: Vlan): void {
         <EmptyState v-else-if="!vlans.length" :message="t('vlan.empty')" />
 
         <div v-else class="overflow-x-auto rounded-xl border">
-            <table class="w-full text-sm">
-                <thead class="bg-muted/50 text-xs text-muted-foreground">
+            <table class="w-full text-[15px]">
+                <thead class="bg-muted/50 text-sm text-muted-foreground">
                     <tr>
-                        <th class="w-24 px-4 py-2.5 text-left font-medium">
+                        <th class="w-24 px-4 py-3 text-left font-medium">
                             {{ t('vlan.vid') }}
                         </th>
-                        <th class="px-4 py-2.5 text-left font-medium">
+                        <th class="px-4 py-3 text-left font-medium">
                             {{ t('common.name') }}
                         </th>
-                        <th class="px-4 py-2.5 text-left font-medium">
+                        <th class="px-4 py-3 text-left font-medium">
                             {{ t('common.description') }}
                         </th>
                         <th
                             v-if="can.manage"
-                            class="px-4 py-2.5 text-right font-medium"
+                            class="px-4 py-3 text-right font-medium"
                         >
                             {{ t('common.actions') }}
                         </th>
@@ -112,7 +112,7 @@ function remove(vlan: Vlan): void {
                 </thead>
                 <tbody>
                     <tr v-for="vlan in vlans" :key="vlan.id" class="border-t">
-                        <td class="px-4 py-2.5">
+                        <td class="px-4 py-3">
                             <span class="flex items-center gap-2">
                                 <span
                                     class="size-2.5 rounded-full"
@@ -126,8 +126,8 @@ function remove(vlan: Vlan): void {
                                 </span>
                             </span>
                         </td>
-                        <td class="px-4 py-2.5 font-medium">{{ vlan.name }}</td>
-                        <td class="px-4 py-2.5 text-muted-foreground">
+                        <td class="px-4 py-3 font-medium">{{ vlan.name }}</td>
+                        <td class="px-4 py-3 text-muted-foreground">
                             {{ vlan.description }}
                         </td>
                         <td v-if="can.manage" class="px-2 py-2 text-right">

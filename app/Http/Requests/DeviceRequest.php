@@ -32,6 +32,7 @@ class DeviceRequest extends FormRequest
             'mgmt_ip' => ['nullable', 'ip', Rule::unique('devices')->ignore($device)],
             'mgmt_url' => ['nullable', 'url', 'max:255'],
             'status' => ['required', Rule::in(Device::STATUSES)],
+            'color' => ['nullable', 'string', 'regex:/^#[0-9A-Fa-f]{6}$/'],
             'notes' => ['nullable', 'string'],
         ];
     }

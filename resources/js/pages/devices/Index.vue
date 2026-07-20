@@ -47,22 +47,22 @@ const search = ref('');
         </EmptyState>
 
         <div v-else class="overflow-x-auto rounded-xl border">
-            <table class="w-full text-sm">
-                <thead class="bg-muted/50 text-xs text-muted-foreground">
+            <table class="w-full text-[15px]">
+                <thead class="bg-muted/50 text-sm text-muted-foreground">
                     <tr>
-                        <th class="px-4 py-2.5 text-left font-medium">
+                        <th class="px-4 py-3 text-left font-medium">
                             {{ t('common.name') }}
                         </th>
-                        <th class="px-4 py-2.5 text-left font-medium">
+                        <th class="px-4 py-3 text-left font-medium">
                             {{ t('device.model') }}
                         </th>
-                        <th class="px-4 py-2.5 text-left font-medium">
+                        <th class="px-4 py-3 text-left font-medium">
                             {{ t('device.mgmtIp') }}
                         </th>
-                        <th class="px-4 py-2.5 text-left font-medium">
+                        <th class="px-4 py-3 text-left font-medium">
                             {{ t('device.location') }}
                         </th>
-                        <th class="px-4 py-2.5 text-right font-medium">
+                        <th class="px-4 py-3 text-right font-medium">
                             {{ t('model.ports') }}
                         </th>
                     </tr>
@@ -80,7 +80,7 @@ const search = ref('');
                         :key="device.id"
                         class="border-t hover:bg-accent/40"
                     >
-                        <td class="px-4 py-2.5">
+                        <td class="px-4 py-3">
                             <Link
                                 :href="show(device.id)"
                                 class="font-medium hover:underline"
@@ -90,18 +90,18 @@ const search = ref('');
                             <Badge
                                 v-if="device.status !== 'active'"
                                 variant="outline"
-                                class="ml-2 text-[11px]"
+                                class="ml-2 text-xs"
                             >
                                 {{ t(`device.statusKind.${device.status}`) }}
                             </Badge>
                         </td>
-                        <td class="px-4 py-2.5 text-muted-foreground">
+                        <td class="px-4 py-3 text-muted-foreground">
                             {{ device.model.vendor }} {{ device.model.model }}
                         </td>
-                        <td class="px-4 py-2.5 font-mono">
+                        <td class="px-4 py-3 font-mono">
                             {{ device.mgmt_ip ?? '—' }}
                         </td>
-                        <td class="px-4 py-2.5 text-muted-foreground">
+                        <td class="px-4 py-3 text-muted-foreground">
                             <span class="font-mono">{{
                                 device.site.code
                             }}</span>
@@ -115,7 +115,7 @@ const search = ref('');
                                 </span>
                             </template>
                         </td>
-                        <td class="px-4 py-2.5 text-right tabular-nums">
+                        <td class="px-4 py-3 text-right tabular-nums">
                             {{ device.ports_count }}
                         </td>
                     </tr>

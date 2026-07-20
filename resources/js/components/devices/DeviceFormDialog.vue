@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { Form } from '@inertiajs/vue3';
 import { useI18n } from 'vue-i18n';
+import ColorPicker from '@/components/ColorPicker.vue';
 import FormField from '@/components/FormField.vue';
 import { Button } from '@/components/ui/button';
 import {
@@ -222,6 +223,15 @@ const action = () =>
                         />
                     </FormField>
                 </div>
+
+                <FormField
+                    id="device-color"
+                    :label="t('device.color')"
+                    :hint="t('device.colorHint')"
+                    :error="errors.color"
+                >
+                    <ColorPicker name="color" :model-value="device?.color" />
+                </FormField>
 
                 <FormField
                     id="device-notes"

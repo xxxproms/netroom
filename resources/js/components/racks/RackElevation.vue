@@ -1,9 +1,11 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue';
 import { useI18n } from 'vue-i18n';
+import { useRackScale } from '@/composables/useRackScale';
 import type { RackDevice } from '@/types';
 
 const { t } = useI18n();
+const { scale, rackScales } = useRackScale();
 
 const props = defineProps<{
     uHeight: number;
@@ -18,7 +20,7 @@ const emit = defineEmits<{
     addAt: [position: number];
 }>();
 
-const UNIT_HEIGHT = 26;
+const metrics = computed(() => rackScales[scale.value]);
 
 /** Units are numbered from the bottom, but a rack is drawn from the top. */
 const units = computed(() =>
@@ -41,17 +43,22 @@ const occupied = computed(() => {
     return map;
 });
 
+/**
+ * The default colour says what a device is; an explicit colour on the device
+ * overrides it, for picking one out of a row of identical switches.
+ */
 const kindColors: Record<string, string> = {
-    switch: 'bg-sky-500/15 border-sky-500/40 text-sky-950 dark:text-sky-100',
-    patch_panel:
-        'bg-amber-500/15 border-amber-500/40 text-amber-950 dark:text-amber-100',
-    router: 'bg-violet-500/15 border-violet-500/40 text-violet-950 dark:text-violet-100',
-    firewall:
-        'bg-rose-500/15 border-rose-500/40 text-rose-950 dark:text-rose-100',
-    server: 'bg-emerald-500/15 border-emerald-500/40 text-emerald-950 dark:text-emerald-100',
-    ups: 'bg-slate-500/15 border-slate-500/40 text-slate-950 dark:text-slate-100',
-    other: 'bg-neutral-500/15 border-neutral-500/40',
+    switch: '#0284c7',
+    patch_panel: '#d97706',
+    router: '#7c3aed',
+    firewall: '#e11d48',
+    server: '#059669',
+    ups: '#64748b',
+    other: '#737373',
 };
+
+const colorOf = (device: RackDevice): string =>
+    device.color ?? kindColors[device.model.kind] ?? kindColors.other;
 
 const dragging = ref<RackDevice | null>(null);
 const dropTarget = ref<number | null>(null);
@@ -79,20 +86,31 @@ function dropOn(unit: number): void {
 
 <template>
     <div class="inline-flex flex-col rounded-xl border bg-muted/30 p-3">
+        <p class="mb-2 text-center text-sm font-medium">
+            {{ t(`rack.face.${face}`) }}
+            <span class="font-normal text-muted-foreground">
+                · {{ uHeight }}U
+            </span>
+        </p>
+
         <div class="flex">
             <!-- Unit numbers down the side, as they are labelled on a rack. -->
             <div class="mr-1.5 flex flex-col">
                 <div
                     v-for="unit in units"
                     :key="unit"
-                    class="flex w-6 items-center justify-end pr-1 font-mono text-[10px] text-muted-foreground"
-                    :style="{ height: `${UNIT_HEIGHT}px` }"
+                    class="flex w-8 items-center justify-end pr-1.5 font-mono text-muted-foreground tabular-nums"
+                    :class="metrics.label"
+                    :style="{ height: `${metrics.unit}px` }"
                 >
                     {{ unit }}
                 </div>
             </div>
 
-            <div class="relative w-64 rounded-md border bg-background">
+            <div
+                class="relative rounded-md border bg-background"
+                :style="{ width: `${metrics.width}px` }"
+            >
                 <template v-for="unit in units" :key="unit">
                     <!-- A device is drawn once, at its bottom unit. -->
                     <div
@@ -101,51 +119,70 @@ function dropOn(unit: number): void {
                             occupied.get(unit)!.position_u === unit
                         "
                         :draggable="editable"
-                        class="absolute inset-x-0 flex cursor-pointer flex-col justify-center overflow-hidden rounded border px-2"
-                        :class="
-                            kindColors[occupied.get(unit)!.model.kind] ??
-                            kindColors.other
-                        "
+                        class="absolute inset-x-0 flex cursor-pointer items-center gap-2 overflow-hidden rounded border-l-4 bg-card px-3 shadow-xs transition-shadow hover:shadow-md"
                         :style="{
-                            bottom: `${(unit - 1) * UNIT_HEIGHT}px`,
-                            height: `${occupied.get(unit)!.model.u_height * UNIT_HEIGHT - 2}px`,
+                            bottom: `${(unit - 1) * metrics.unit}px`,
+                            height: `${occupied.get(unit)!.model.u_height * metrics.unit - 3}px`,
+                            borderLeftColor: colorOf(occupied.get(unit)!),
+                            backgroundColor: `color-mix(in srgb, ${colorOf(occupied.get(unit)!)} 12%, var(--card))`,
                         }"
+                        :title="`${occupied.get(unit)!.name} — ${occupied.get(unit)!.model.vendor} ${occupied.get(unit)!.model.model}`"
                         @click="emit('select', occupied.get(unit)!)"
                         @dragstart="startDrag(occupied.get(unit)!, $event)"
                     >
-                        <span class="truncate text-xs font-medium">
-                            {{ occupied.get(unit)!.name }}
-                        </span>
-                        <span class="truncate text-[10px] opacity-70">
-                            {{ occupied.get(unit)!.model.model }}
+                        <div class="min-w-0 flex-1">
+                            <p
+                                class="truncate leading-tight font-semibold"
+                                :class="metrics.name"
+                            >
+                                {{ occupied.get(unit)!.name }}
+                            </p>
+                            <p
+                                class="truncate leading-tight text-muted-foreground"
+                                :class="metrics.detail"
+                            >
+                                {{ occupied.get(unit)!.model.model }}
+                            </p>
+                        </div>
+
+                        <span
+                            v-if="occupied.get(unit)!.mgmt_ip"
+                            class="shrink-0 font-mono text-muted-foreground tabular-nums"
+                            :class="metrics.detail"
+                        >
+                            {{ occupied.get(unit)!.mgmt_ip }}
                         </span>
                     </div>
 
                     <!-- An empty unit: a drop target, and a shortcut to add. -->
                     <div
                         v-else-if="!occupied.get(unit)"
-                        class="absolute inset-x-0 border-b border-dashed border-border/60 transition-colors"
+                        class="absolute inset-x-0 flex items-center justify-center border-b border-dashed border-border/60 transition-colors"
                         :class="{
                             'bg-primary/10': dropTarget === unit,
-                            'cursor-pointer hover:bg-accent/60': editable,
+                            'group cursor-pointer hover:bg-accent/60': editable,
                         }"
                         :style="{
-                            bottom: `${(unit - 1) * UNIT_HEIGHT}px`,
-                            height: `${UNIT_HEIGHT}px`,
+                            bottom: `${(unit - 1) * metrics.unit}px`,
+                            height: `${metrics.unit}px`,
                         }"
                         @dragover.prevent="dropTarget = unit"
                         @dragleave="dropTarget === unit && (dropTarget = null)"
                         @drop.prevent="dropOn(unit)"
                         @click="editable && emit('addAt', unit)"
-                    />
+                    >
+                        <span
+                            v-if="editable"
+                            class="text-muted-foreground opacity-0 transition-opacity group-hover:opacity-100"
+                            :class="metrics.detail"
+                        >
+                            {{ t('rack.addHere') }}
+                        </span>
+                    </div>
                 </template>
 
-                <div :style="{ height: `${uHeight * UNIT_HEIGHT}px` }" />
+                <div :style="{ height: `${uHeight * metrics.unit}px` }" />
             </div>
         </div>
-
-        <p class="mt-2 text-center text-[11px] text-muted-foreground">
-            {{ t(`rack.face.${face}`) }} · {{ uHeight }}U
-        </p>
     </div>
 </template>

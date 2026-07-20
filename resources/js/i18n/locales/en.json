@@ -103,7 +103,15 @@
             "front": "Front",
             "rear": "Rear"
         },
-        "open": "Rack elevation"
+        "open": "Rack elevation",
+        "addHere": "add here",
+        "smaller": "Smaller",
+        "bigger": "Bigger",
+        "scale": {
+            "compact": "Compact",
+            "normal": "Normal",
+            "large": "Large"
+        }
     },
     "model": {
         "title": "Device models",
@@ -210,7 +218,11 @@
             "spare": "Spare",
             "failed": "Failed",
             "decommissioned": "Decommissioned"
-        }
+        },
+        "color": "Colour on the elevation",
+        "colorHint": "To pick this one out from identical neighbours",
+        "colorAuto": "By device type",
+        "auto": "auto"
     },
     "port": {
         "number": "Port",

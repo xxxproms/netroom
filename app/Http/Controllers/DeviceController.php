@@ -133,6 +133,7 @@ class DeviceController extends Controller
             'id' => $device->id,
             'name' => $device->name,
             'status' => $device->status,
+            'color' => $device->color,
             'position_u' => $device->position_u,
             'mgmt_ip' => $device->mgmt_ip,
             'ports_count' => $device->ports_count ?? $device->ports()->count(),

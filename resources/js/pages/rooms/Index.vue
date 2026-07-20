@@ -54,7 +54,7 @@ defineOptions({
                     </p>
                 </div>
                 <div class="flex flex-col items-end gap-1">
-                    <Badge variant="outline" class="font-mono text-[11px]">
+                    <Badge variant="outline" class="font-mono text-xs">
                         {{ room.site?.code }}
                     </Badge>
                     <span class="text-xs text-muted-foreground">
