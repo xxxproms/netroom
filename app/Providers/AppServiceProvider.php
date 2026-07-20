@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use App\Support\SiteContext;
 use Carbon\CarbonImmutable;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\DB;
@@ -15,7 +16,9 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        //
+        // One instance per request: the picked site is read many times while
+        // rendering a page, and it lives in the session.
+        $this->app->scoped(SiteContext::class);
     }
 
     /**

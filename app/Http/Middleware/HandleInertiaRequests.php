@@ -2,6 +2,8 @@
 
 namespace App\Http\Middleware;
 
+use App\Models\Site;
+use App\Support\SiteContext;
 use Illuminate\Http\Request;
 use Inertia\Middleware;
 
@@ -44,7 +46,37 @@ class HandleInertiaRequests extends Middleware
             'locale' => app()->getLocale(),
             'locales' => config('netroom.locales'),
             'allowRegistration' => (bool) config('netroom.allow_registration'),
+            'siteContext' => fn () => $this->siteContext($request),
+            'permissions' => fn () => $request->user()?->getAllPermissions()->pluck('name') ?? [],
             'sidebarOpen' => ! $request->hasCookie('sidebar_state') || $request->cookie('sidebar_state') === 'true',
+        ];
+    }
+
+    /**
+     * The site picker: which sites the user may reach and which one they are
+     * looking at. Null means they are looking at all of them at once.
+     *
+     * @return array{current: array{id: int, name: string, code: string}|null, available: list<array{id: int, name: string, code: string}>}
+     */
+    private function siteContext(Request $request): array
+    {
+        if (! $request->user()) {
+            return ['current' => null, 'available' => []];
+        }
+
+        $context = app(SiteContext::class);
+
+        $present = fn (Site $site) => [
+            'id' => $site->id,
+            'name' => $site->name,
+            'code' => $site->code,
+        ];
+
+        $current = $context->current();
+
+        return [
+            'current' => $current ? $present($current) : null,
+            'available' => array_values($context->available()->map($present)->all()),
         ];
     }
 }

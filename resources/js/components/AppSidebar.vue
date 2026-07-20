@@ -1,6 +1,16 @@
 <script setup lang="ts">
 import { Link } from '@inertiajs/vue3';
-import { BookOpen, FolderGit2, LayoutGrid } from '@lucide/vue';
+import {
+    BookOpen,
+    Building2,
+    Cable,
+    DoorClosed,
+    FolderGit2,
+    LayoutGrid,
+    Network,
+    Server,
+    Tags,
+} from '@lucide/vue';
 import { computed } from 'vue';
 import { useI18n } from 'vue-i18n';
 import AppLogo from '@/components/AppLogo.vue';
@@ -17,16 +27,24 @@ import {
     SidebarMenuItem,
 } from '@/components/ui/sidebar';
 import { dashboard } from '@/routes';
+import { index as deviceModels } from '@/routes/device-models';
+import { index as racks } from '@/routes/racks';
+import { index as rooms } from '@/routes/rooms';
+import { index as sites } from '@/routes/sites';
+import { index as vlanDomains } from '@/routes/vlan-domains';
+import { index as vlans } from '@/routes/vlans';
 import type { NavItem } from '@/types';
 
 const { t } = useI18n();
 
 const mainNavItems = computed<NavItem[]>(() => [
-    {
-        title: t('nav.dashboard'),
-        href: dashboard(),
-        icon: LayoutGrid,
-    },
+    { title: t('nav.dashboard'), href: dashboard(), icon: LayoutGrid },
+    { title: t('nav.sites'), href: sites(), icon: Building2 },
+    { title: t('nav.rooms'), href: rooms(), icon: DoorClosed },
+    { title: t('nav.racks'), href: racks(), icon: Server },
+    { title: t('nav.vlans'), href: vlans(), icon: Network },
+    { title: t('nav.vlanDomains'), href: vlanDomains(), icon: Cable },
+    { title: t('nav.models'), href: deviceModels(), icon: Tags },
 ]);
 
 const footerNavItems = computed<NavItem[]>(() => [

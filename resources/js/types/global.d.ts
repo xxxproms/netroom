@@ -1,4 +1,5 @@
 import type { Auth } from '@/types/auth';
+import type { SiteContext } from '@/types/netroom';
 
 // Extend ImportMeta interface for Vite...
 declare module 'vite/client' {
@@ -22,6 +23,8 @@ declare module '@inertiajs/core' {
             locale: string;
             locales: Record<string, string>;
             allowRegistration: boolean;
+            siteContext: SiteContext;
+            permissions: string[];
             [key: string]: unknown;
         };
     }

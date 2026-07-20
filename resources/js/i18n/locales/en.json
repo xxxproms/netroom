@@ -12,6 +12,7 @@
         "devices": "Devices",
         "models": "Device models",
         "vlans": "VLANs",
+        "vlanDomains": "VLAN domains",
         "cables": "Cabling",
         "tunnels": "VPN tunnels",
         "workplaces": "Workplaces",
@@ -26,6 +27,7 @@
     },
     "common": {
         "create": "Create",
+        "add": "Add",
         "edit": "Edit",
         "delete": "Delete",
         "save": "Save",
@@ -38,9 +40,130 @@
         "notes": "Notes",
         "status": "Status",
         "type": "Type",
+        "color": "Colour",
         "empty": "Nothing here yet",
         "loading": "Loading…",
-        "back": "Back"
+        "back": "Back",
+        "deleteConfirm": "Delete permanently?",
+        "optional": "optional"
+    },
+    "site": {
+        "all": "All sites",
+        "switch": "Switch site",
+        "title": "Sites",
+        "one": "Site",
+        "new": "New site",
+        "edit": "Edit site",
+        "code": "Code",
+        "codeHint": "Short code used on labels and diagrams, e.g. AS",
+        "city": "City",
+        "address": "Address",
+        "domain": "VLAN domain",
+        "domainHint": "Sites in one domain share a switched network and a single VLAN plan",
+        "rooms": "Rooms",
+        "roomsCount": "Rooms",
+        "empty": "No sites yet",
+        "kind": {
+            "complex": "Complex",
+            "office": "Office",
+            "factory": "Factory",
+            "cottage": "Cottage",
+            "other": "Other"
+        }
+    },
+    "room": {
+        "title": "Rooms",
+        "one": "Room",
+        "new": "New room",
+        "edit": "Edit room",
+        "floor": "Floor",
+        "racks": "Racks",
+        "racksCount": "Racks",
+        "empty": "This site has no rooms yet",
+        "kind": {
+            "server_room": "Server room",
+            "office": "Office",
+            "hall": "Hall",
+            "other": "Other"
+        }
+    },
+    "rack": {
+        "title": "Racks",
+        "one": "Rack",
+        "new": "New rack",
+        "edit": "Edit rack",
+        "height": "Height, U",
+        "empty": "This room has no racks yet",
+        "kind": {
+            "rack": "Floor rack",
+            "wall_cabinet": "Wall cabinet",
+            "open_frame": "Open frame"
+        }
+    },
+    "model": {
+        "title": "Device models",
+        "one": "Model",
+        "new": "New model",
+        "edit": "Edit model",
+        "vendor": "Vendor",
+        "model": "Model",
+        "height": "Height, U",
+        "ports": "Ports",
+        "portTemplates": "Port templates",
+        "portTemplatesHint": "Every device of this model gets its ports from these",
+        "addTemplate": "Add a run of ports",
+        "prefix": "Prefix",
+        "start": "Starts at",
+        "count": "Count",
+        "media": "Media",
+        "speed": "Speed, Mbps",
+        "role": "Role",
+        "empty": "The catalogue is empty",
+        "kind": {
+            "switch": "Switch",
+            "patch_panel": "Patch panel",
+            "router": "Router",
+            "firewall": "Firewall",
+            "server": "Server",
+            "ups": "UPS",
+            "other": "Other"
+        },
+        "mediaKind": {
+            "rj45": "RJ45",
+            "sfp": "SFP",
+            "sfp_plus": "SFP+",
+            "lc": "LC (fibre)",
+            "sc": "SC (fibre)"
+        },
+        "roleKind": {
+            "network": "Network port",
+            "front": "Front (panel)",
+            "rear": "Rear (panel)"
+        }
+    },
+    "vlan": {
+        "title": "VLANs",
+        "one": "VLAN",
+        "new": "New VLAN",
+        "edit": "Edit VLAN",
+        "vid": "VID",
+        "domain": "Domain",
+        "empty": "This domain has no VLANs yet",
+        "copy": "Copy plan",
+        "copyFrom": "From domain",
+        "copyTo": "To domain",
+        "copyHint": "Only VIDs missing from the target domain are copied",
+        "noDomains": "Create a site first — it comes with a VLAN domain"
+    },
+    "vlanDomain": {
+        "title": "VLAN domains",
+        "one": "VLAN domain",
+        "new": "New domain",
+        "edit": "Edit domain",
+        "hint": "A domain groups sites that share a switched network and one VLAN plan",
+        "sitesCount": "Sites",
+        "vlansCount": "VLANs",
+        "empty": "No domains yet"
     },
     "settings": {
         "title": "Settings",
