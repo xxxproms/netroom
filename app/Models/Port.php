@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Support\Carbon;
 
@@ -78,5 +79,18 @@ class Port extends Model
     public function frontPort(): HasOne
     {
         return $this->hasOne(Port::class, 'rear_port_id');
+    }
+
+    /**
+     * The VLANs carried on this port, tagged or untagged.
+     *
+     * @return BelongsToMany<Vlan, $this, PortVlan, 'pivot'>
+     */
+    public function vlans(): BelongsToMany
+    {
+        return $this->belongsToMany(Vlan::class)
+            ->using(PortVlan::class)
+            ->withPivot('mode')
+            ->withTimestamps();
     }
 }

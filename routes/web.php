@@ -10,6 +10,7 @@ use App\Http\Controllers\SiteContextController;
 use App\Http\Controllers\SiteController;
 use App\Http\Controllers\VlanController;
 use App\Http\Controllers\VlanDomainController;
+use App\Http\Controllers\VlanMatrixController;
 use Illuminate\Support\Facades\Route;
 
 Route::inertia('/', 'Welcome')->name('home');
@@ -30,6 +31,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     Route::resource('devices', DeviceController::class)->except(['create', 'edit']);
     Route::patch('ports/{port}', [PortController::class, 'update'])->name('ports.update');
+
+    Route::get('devices/{device}/vlans', [VlanMatrixController::class, 'show'])->name('devices.vlans');
+    Route::put('devices/{device}/vlans', [VlanMatrixController::class, 'update'])->name('devices.vlans.update');
     Route::resource('device-models', DeviceModelController::class)->except(['create', 'edit', 'show']);
     Route::resource('vlan-domains', VlanDomainController::class)->except(['create', 'edit', 'show']);
 

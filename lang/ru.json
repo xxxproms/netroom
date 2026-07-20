@@ -21,6 +21,9 @@
     "VLAN domain deleted.": "VLAN-домен удалён.",
     "This VLAN domain still has sites in it.": "В этом VLAN-домене ещё есть филиалы.",
     "Copied :count VLAN.|Copied :count VLANs.": "Скопирован :count VLAN.|Скопировано :count VLAN.",
+    "Saved :count change.|Saved :count changes.": "Сохранено :count изменение.|Сохранено :count изменения.|Сохранено :count изменений.",
+    "This port belongs to another device.": "Этот порт принадлежит другому устройству.",
+    "This VLAN is not in the site's plan.": "Этого VLAN нет в плане филиала.",
     "VLAN domain": "VLAN-домен",
     "code": "код"
 }

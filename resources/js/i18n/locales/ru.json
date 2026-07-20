@@ -229,5 +229,18 @@
         "description": "Что подключено",
         "free": "свободен",
         "uplink": "Uplink"
+    },
+    "vlanMatrix": {
+        "title": "VLAN на портах",
+        "open": "VLAN на портах",
+        "untagged": "Untagged (порт доступа)",
+        "tagged": "Tagged (транк)",
+        "clickHint": "Клик по ячейке: пусто → U → T → пусто",
+        "tagAll": "Отметить tagged на всех портах",
+        "clearRow": "Очистить строку",
+        "pvid": "PVID",
+        "noVlans": "В плане филиала пока нет ни одного VLAN",
+        "saveCount": "Сохранить ({count})",
+        "backToDevice": "К устройству"
     }
 }

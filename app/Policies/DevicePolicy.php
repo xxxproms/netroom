@@ -29,6 +29,16 @@ class DevicePolicy
             && $user->canAccessSite($device->site_id);
     }
 
+    /**
+     * Editing the VLAN matrix is a network change, not a rack change: it is
+     * the VLAN permission that decides, not the infrastructure one.
+     */
+    public function updateVlans(User $user, Device $device): bool
+    {
+        return $user->can(Permissions::MANAGE_VLANS)
+            && $user->canAccessSite($device->site_id);
+    }
+
     public function delete(User $user, Device $device): bool
     {
         return $this->update($user, $device);

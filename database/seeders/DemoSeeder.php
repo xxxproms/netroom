@@ -11,6 +11,7 @@ use App\Models\Site;
 use App\Models\User;
 use App\Models\Vlan;
 use App\Models\VlanDomain;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
@@ -303,6 +304,74 @@ class DemoSeeder extends Seeder
 
             $ports->handle($device);
             $this->describePorts($device);
+            $this->assignVlans($device);
+        }
+    }
+
+    /**
+     * VLAN membership that matches the descriptions: an uplink carries the whole
+     * plan tagged, a desk port is untagged in the office VLAN with voice tagged
+     * on top, and cameras or tills sit in their own.
+     */
+    private function assignVlans(Device $device): void
+    {
+        if ($device->deviceModel->kind !== 'switch') {
+            return;
+        }
+
+        /** @var Collection<int, Vlan> $plan */
+        $plan = Vlan::where('vlan_domain_id', $device->site->vlan_domain_id)->get();
+
+        // Which VLAN a port joins, decided by what is written on it.
+        $byKeyword = [
+            'Камера' => ['cctv', 'cctv-n'],
+            'Видеорегистратор' => ['cctv', 'cctv-n'],
+            'Касса' => ['pos'],
+            'IP-телефон' => ['voice'],
+            'Точка доступа' => ['wifi-guest', 'wifi'],
+            'Сервер' => ['srv'],
+            'Контроллер СКУД' => ['acs'],
+            'Склад' => ['wms'],
+        ];
+
+        $office = $plan->first(fn (Vlan $vlan) => str_starts_with($vlan->name, 'office'));
+        $voice = $plan->firstWhere('name', 'voice');
+
+        foreach ($device->ports()->where('role', 'network')->get() as $port) {
+            if ($port->is_uplink) {
+                $port->vlans()->sync(
+                    $plan->mapWithKeys(fn (Vlan $vlan) => [$vlan->id => ['mode' => 'tagged']])->all(),
+                );
+
+                continue;
+            }
+
+            if ($port->description === null) {
+                continue;
+            }
+
+            $names = ['office'];
+
+            foreach ($byKeyword as $keyword => $candidates) {
+                if (str_contains($port->description, $keyword)) {
+                    $names = $candidates;
+
+                    break;
+                }
+            }
+
+            $vlan = $plan->first(fn (Vlan $item) => in_array($item->name, $names, true)) ?? $office;
+
+            if (! $vlan instanceof Vlan) {
+                continue;
+            }
+
+            $port->vlans()->syncWithoutDetaching([$vlan->id => ['mode' => 'untagged']]);
+
+            // A desk usually has a phone behind it, so voice rides tagged.
+            if ($voice instanceof Vlan && $vlan->is($office)) {
+                $port->vlans()->syncWithoutDetaching([$voice->id => ['mode' => 'tagged']]);
+            }
         }
     }
 

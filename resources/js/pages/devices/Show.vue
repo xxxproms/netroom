@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { Head, Link, router } from '@inertiajs/vue3';
-import { ExternalLink, Pencil, Trash2 } from '@lucide/vue';
+import { ExternalLink, Network, Pencil, Trash2 } from '@lucide/vue';
 import { ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 import DeviceFormDialog from '@/components/devices/DeviceFormDialog.vue';
@@ -8,7 +8,11 @@ import PortTable from '@/components/devices/PortTable.vue';
 import PageHeader from '@/components/PageHeader.vue';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { destroy, index as devicesIndex } from '@/routes/devices';
+import {
+    destroy,
+    index as devicesIndex,
+    vlans as deviceVlans,
+} from '@/routes/devices';
 import { show as showRack } from '@/routes/racks';
 import type { Device, DeviceModelSummary, Rack } from '@/types';
 
@@ -65,6 +69,15 @@ function remove(): void {
                         {{ t('device.openWebUi') }}
                     </Button>
                 </a>
+                <Link
+                    v-if="device.model.kind === 'switch'"
+                    :href="deviceVlans(device.id).url"
+                >
+                    <Button size="sm" variant="outline">
+                        <Network class="size-4" />
+                        {{ t('vlanMatrix.open') }}
+                    </Button>
+                </Link>
                 <Button
                     v-if="can.update"
                     size="sm"

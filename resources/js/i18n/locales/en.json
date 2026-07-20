@@ -229,5 +229,18 @@
         "description": "What is connected",
         "free": "free",
         "uplink": "Uplink"
+    },
+    "vlanMatrix": {
+        "title": "VLANs on ports",
+        "open": "VLANs on ports",
+        "untagged": "Untagged (access port)",
+        "tagged": "Tagged (trunk)",
+        "clickHint": "Click a cell: empty → U → T → empty",
+        "tagAll": "Tag on every port",
+        "clearRow": "Clear the row",
+        "pvid": "PVID",
+        "noVlans": "The site plan has no VLANs yet",
+        "saveCount": "Save ({count})",
+        "backToDevice": "Back to the device"
     }
 }
