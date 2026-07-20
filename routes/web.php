@@ -1,7 +1,10 @@
 <?php
 
+use App\Http\Controllers\DeviceController;
 use App\Http\Controllers\DeviceModelController;
+use App\Http\Controllers\PortController;
 use App\Http\Controllers\RackController;
+use App\Http\Controllers\RackElevationController;
 use App\Http\Controllers\RoomController;
 use App\Http\Controllers\SiteContextController;
 use App\Http\Controllers\SiteController;
@@ -20,6 +23,13 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::resource('sites', SiteController::class)->except(['create', 'edit']);
     Route::resource('rooms', RoomController::class)->except(['create', 'edit']);
     Route::resource('racks', RackController::class)->except(['create', 'edit', 'show']);
+
+    Route::get('racks/{rack}', [RackElevationController::class, 'show'])->name('racks.show');
+    Route::put('racks/{rack}/devices/{device}/position', [RackElevationController::class, 'move'])
+        ->name('racks.devices.move');
+
+    Route::resource('devices', DeviceController::class)->except(['create', 'edit']);
+    Route::patch('ports/{port}', [PortController::class, 'update'])->name('ports.update');
     Route::resource('device-models', DeviceModelController::class)->except(['create', 'edit', 'show']);
     Route::resource('vlan-domains', VlanDomainController::class)->except(['create', 'edit', 'show']);
 

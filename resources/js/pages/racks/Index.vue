@@ -5,8 +5,7 @@ import { useI18n } from 'vue-i18n';
 import EmptyState from '@/components/EmptyState.vue';
 import PageHeader from '@/components/PageHeader.vue';
 import { Badge } from '@/components/ui/badge';
-import { index as racksIndex } from '@/routes/racks';
-import { show as showRoom } from '@/routes/rooms';
+import { index as racksIndex, show } from '@/routes/racks';
 import type { Rack } from '@/types';
 
 const { t } = useI18n();
@@ -35,7 +34,7 @@ defineOptions({
             <Link
                 v-for="rack in racks"
                 :key="rack.id"
-                :href="showRoom(rack.room!.id)"
+                :href="show(rack.id)"
                 class="flex items-center gap-3 rounded-xl border p-4 transition-colors hover:border-primary/50 hover:bg-accent/40"
             >
                 <span

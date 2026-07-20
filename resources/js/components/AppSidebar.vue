@@ -8,6 +8,7 @@ import {
     FolderGit2,
     LayoutGrid,
     Network,
+    Router,
     Server,
     Tags,
 } from '@lucide/vue';
@@ -28,6 +29,7 @@ import {
 } from '@/components/ui/sidebar';
 import { dashboard } from '@/routes';
 import { index as deviceModels } from '@/routes/device-models';
+import { index as devices } from '@/routes/devices';
 import { index as racks } from '@/routes/racks';
 import { index as rooms } from '@/routes/rooms';
 import { index as sites } from '@/routes/sites';
@@ -42,6 +44,7 @@ const mainNavItems = computed<NavItem[]>(() => [
     { title: t('nav.sites'), href: sites(), icon: Building2 },
     { title: t('nav.rooms'), href: rooms(), icon: DoorClosed },
     { title: t('nav.racks'), href: racks(), icon: Server },
+    { title: t('nav.devices'), href: devices(), icon: Router },
     { title: t('nav.vlans'), href: vlans(), icon: Network },
     { title: t('nav.vlanDomains'), href: vlanDomains(), icon: Cable },
     { title: t('nav.models'), href: deviceModels(), icon: Tags },

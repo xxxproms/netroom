@@ -9,6 +9,7 @@ import RackFormDialog from '@/components/racks/RackFormDialog.vue';
 import RoomFormDialog from '@/components/rooms/RoomFormDialog.vue';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
+import { show as showRack } from '@/routes/racks';
 import { destroy, index as rooms } from '@/routes/rooms';
 import { show as showSite } from '@/routes/sites';
 import type { Rack, Room } from '@/types';
@@ -111,18 +112,23 @@ function edit(rack: Rack): void {
                     :key="rack.id"
                     class="flex items-center gap-3 rounded-xl border p-4"
                 >
-                    <span
-                        class="flex size-9 items-center justify-center rounded-lg bg-muted"
+                    <Link
+                        :href="showRack(rack.id)"
+                        class="flex min-w-0 flex-1 items-center gap-3"
                     >
-                        <Server class="size-4.5 text-muted-foreground" />
-                    </span>
-                    <div class="min-w-0 flex-1">
-                        <p class="truncate font-medium">{{ rack.name }}</p>
-                        <p class="text-xs text-muted-foreground">
-                            {{ t(`rack.kind.${rack.kind}`) }} ·
-                            {{ rack.u_height }}U
-                        </p>
-                    </div>
+                        <span
+                            class="flex size-9 items-center justify-center rounded-lg bg-muted"
+                        >
+                            <Server class="size-4.5 text-muted-foreground" />
+                        </span>
+                        <div class="min-w-0 flex-1">
+                            <p class="truncate font-medium">{{ rack.name }}</p>
+                            <p class="text-xs text-muted-foreground">
+                                {{ t(`rack.kind.${rack.kind}`) }} ·
+                                {{ rack.u_height }}U
+                            </p>
+                        </div>
+                    </Link>
                     <Button
                         v-if="can.update"
                         size="icon"

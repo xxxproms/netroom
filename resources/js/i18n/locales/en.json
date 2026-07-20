@@ -98,7 +98,12 @@
             "rack": "Floor rack",
             "wall_cabinet": "Wall cabinet",
             "open_frame": "Open frame"
-        }
+        },
+        "face": {
+            "front": "Front",
+            "rear": "Rear"
+        },
+        "open": "Rack elevation"
     },
     "model": {
         "title": "Device models",
@@ -181,5 +186,36 @@
         "password": "Password",
         "remember": "Remember me",
         "forgot": "Forgot password?"
+    },
+    "device": {
+        "title": "Devices",
+        "one": "Device",
+        "new": "New device",
+        "edit": "Edit device",
+        "model": "Model",
+        "mgmtIp": "Management IP",
+        "mgmtUrl": "Web interface URL",
+        "openWebUi": "Open web interface",
+        "serial": "Serial number",
+        "position": "Position, U",
+        "face": "Face",
+        "noRack": "Not in a rack",
+        "location": "Location",
+        "mounted": "Mounted",
+        "empty": "No devices yet",
+        "addFromRack": "Devices are added on the rack elevation — click a free unit",
+        "portsHint": "Ports are laid out automatically from the chosen model",
+        "statusKind": {
+            "active": "Active",
+            "spare": "Spare",
+            "failed": "Failed",
+            "decommissioned": "Decommissioned"
+        }
+    },
+    "port": {
+        "number": "Port",
+        "description": "What is connected",
+        "free": "free",
+        "uplink": "Uplink"
     }
 }
