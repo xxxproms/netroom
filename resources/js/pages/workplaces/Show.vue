@@ -19,7 +19,11 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import WorkplaceFormDialog from '@/components/workplaces/WorkplaceFormDialog.vue';
 import { destroy as removeCable } from '@/routes/cables';
-import { destroy as removeOutlet, store as storeOutlet, trace } from '@/routes/outlets';
+import {
+    destroy as removeOutlet,
+    store as storeOutlet,
+    trace,
+} from '@/routes/outlets';
 import { destroy, index as workplacesIndex } from '@/routes/workplaces';
 import type { Outlet, Room, Workplace } from '@/types';
 

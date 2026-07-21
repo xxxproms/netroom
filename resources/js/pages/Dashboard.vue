@@ -10,10 +10,9 @@ import {
     Network,
     Router,
     Server,
-    ShieldCheck
-    
+    ShieldCheck,
 } from '@lucide/vue';
-import type {LucideIcon} from '@lucide/vue';
+import type { LucideIcon } from '@lucide/vue';
 import { computed } from 'vue';
 import { useI18n } from 'vue-i18n';
 import PageHeader from '@/components/PageHeader.vue';
@@ -101,7 +100,10 @@ function eventLabel(event: string): string {
     <Head :title="t('nav.dashboard')" />
 
     <div class="flex flex-col gap-6 p-4">
-        <PageHeader :title="t('dashboard.title')" :description="t('dashboard.hint')" />
+        <PageHeader
+            :title="t('dashboard.title')"
+            :description="t('dashboard.hint')"
+        />
 
         <div class="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
             <Link
@@ -110,9 +112,16 @@ function eventLabel(event: string): string {
                 :href="card.href"
                 class="flex flex-col gap-2 rounded-xl border p-4 transition-colors hover:border-primary/50 hover:bg-accent/40"
             >
-                <component :is="card.icon" class="size-5 text-muted-foreground" />
-                <p class="text-2xl font-semibold tabular-nums">{{ stats[card.key] }}</p>
-                <p class="text-sm text-muted-foreground">{{ t(`dashboard.stat.${card.key}`) }}</p>
+                <component
+                    :is="card.icon"
+                    class="size-5 text-muted-foreground"
+                />
+                <p class="text-2xl font-semibold tabular-nums">
+                    {{ stats[card.key] }}
+                </p>
+                <p class="text-sm text-muted-foreground">
+                    {{ t(`dashboard.stat.${card.key}`) }}
+                </p>
             </Link>
         </div>
 
@@ -138,7 +147,9 @@ function eventLabel(event: string): string {
                             class="flex items-center justify-between gap-3 rounded-lg border border-amber-500/30 bg-amber-500/5 px-3 py-2 text-sm transition-colors hover:bg-amber-500/10"
                         >
                             <span>{{ t(`dashboard.warn.${item.key}`) }}</span>
-                            <span class="font-semibold tabular-nums text-amber-600">
+                            <span
+                                class="font-semibold text-amber-600 tabular-nums"
+                            >
                                 {{ item.count }}
                             </span>
                         </Link>
@@ -168,7 +179,12 @@ function eventLabel(event: string): string {
                         <div class="min-w-0">
                             <p class="truncate">
                                 <span class="text-muted-foreground">
-                                    {{ t(`dashboard.model.${entry.model}`, entry.model) }}
+                                    {{
+                                        t(
+                                            `dashboard.model.${entry.model}`,
+                                            entry.model,
+                                        )
+                                    }}
                                 </span>
                                 <span v-if="entry.subject" class="font-medium">
                                     · {{ entry.subject }}
@@ -176,7 +192,9 @@ function eventLabel(event: string): string {
                             </p>
                             <p class="text-xs text-muted-foreground">
                                 {{ eventLabel(entry.event) }}
-                                <template v-if="entry.causer">· {{ entry.causer }}</template>
+                                <template v-if="entry.causer"
+                                    >· {{ entry.causer }}</template
+                                >
                             </p>
                         </div>
                         <time

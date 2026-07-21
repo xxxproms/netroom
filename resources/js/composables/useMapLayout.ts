@@ -54,7 +54,9 @@ export function useMapLayout(items: Positioned[], options: Options) {
 
         const ctm = svg.getScreenCTM();
 
-        return ctm ? point.matrixTransform(ctm.inverse()) : { x: point.x, y: point.y };
+        return ctm
+            ? point.matrixTransform(ctm.inverse())
+            : { x: point.x, y: point.y };
     }
 
     function start(id: number, event: PointerEvent): void {

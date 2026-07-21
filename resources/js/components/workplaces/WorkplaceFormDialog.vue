@@ -64,7 +64,9 @@ const action = () =>
                             v-for="option in sites"
                             :key="option.id"
                             :value="option.id"
-                            :selected="(workplace?.site_id ?? siteId) === option.id"
+                            :selected="
+                                (workplace?.site_id ?? siteId) === option.id
+                            "
                         >
                             {{ option.name }}
                         </option>

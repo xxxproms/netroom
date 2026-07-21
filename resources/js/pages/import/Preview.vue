@@ -95,7 +95,10 @@ function warningText(warning: Warning): string {
     <Head :title="t('import.preview')" />
 
     <div class="flex flex-col gap-6 p-4">
-        <PageHeader :title="t('import.preview')" :description="t('import.previewHint')">
+        <PageHeader
+            :title="t('import.preview')"
+            :description="t('import.previewHint')"
+        >
             <template #actions>
                 <Button variant="ghost" size="sm" as-child>
                     <Link :href="importMethod()">
@@ -103,17 +106,27 @@ function warningText(warning: Warning): string {
                         {{ t('import.back') }}
                     </Link>
                 </Button>
-                <Form v-bind="commit.form()" class="inline" v-slot="{ processing }">
+                <Form
+                    v-bind="commit.form()"
+                    class="inline"
+                    v-slot="{ processing }"
+                >
                     <input type="hidden" name="token" :value="token" />
                     <Button type="submit" size="sm" :disabled="processing">
                         <FileUp class="size-4" />
-                        {{ processing ? t('import.importing') : t('import.confirm') }}
+                        {{
+                            processing
+                                ? t('import.importing')
+                                : t('import.confirm')
+                        }}
                     </Button>
                 </Form>
             </template>
         </PageHeader>
 
-        <div class="flex flex-wrap items-center gap-2 text-sm text-muted-foreground">
+        <div
+            class="flex flex-wrap items-center gap-2 text-sm text-muted-foreground"
+        >
             <span class="font-medium text-foreground">{{ filename }}</span>
             <span>·</span>
             <span>{{ t('import.domain') }}: {{ domain }}</span>
@@ -125,18 +138,27 @@ function warningText(warning: Warning): string {
                 :key="item.label"
                 class="rounded-xl border p-4"
             >
-                <p class="text-2xl font-semibold tabular-nums">{{ item.value }}</p>
+                <p class="text-2xl font-semibold tabular-nums">
+                    {{ item.value }}
+                </p>
                 <p class="text-sm text-muted-foreground">{{ item.label }}</p>
             </div>
         </div>
 
-        <div v-if="warnings.length" class="flex flex-col gap-2 rounded-xl border border-amber-500/30 bg-amber-500/5 p-4">
+        <div
+            v-if="warnings.length"
+            class="flex flex-col gap-2 rounded-xl border border-amber-500/30 bg-amber-500/5 p-4"
+        >
             <p class="flex items-center gap-2 text-sm font-medium">
                 <AlertTriangle class="size-4 text-amber-500" />
                 {{ t('import.warningsTitle') }}
             </p>
             <ul class="flex flex-col gap-1 pl-6 text-sm text-muted-foreground">
-                <li v-for="(warning, index) in warnings" :key="index" class="list-disc">
+                <li
+                    v-for="(warning, index) in warnings"
+                    :key="index"
+                    class="list-disc"
+                >
                     {{ warningText(warning) }}
                 </li>
             </ul>
@@ -144,15 +166,31 @@ function warningText(warning: Warning): string {
 
         <div class="overflow-x-auto rounded-xl border">
             <table class="w-full text-sm">
-                <thead class="border-b bg-muted/40 text-left text-muted-foreground">
+                <thead
+                    class="border-b bg-muted/40 text-left text-muted-foreground"
+                >
                     <tr>
-                        <th class="px-3 py-2 font-medium">{{ t('import.colName') }}</th>
-                        <th class="px-3 py-2 font-medium">{{ t('import.colSite') }}</th>
-                        <th class="px-3 py-2 font-medium">{{ t('import.colModel') }}</th>
-                        <th class="px-3 py-2 font-medium">{{ t('import.colMgmt') }}</th>
-                        <th class="px-3 py-2 text-right font-medium">{{ t('import.colPorts') }}</th>
-                        <th class="px-3 py-2 text-right font-medium">{{ t('import.colUplinks') }}</th>
-                        <th class="px-3 py-2 text-right font-medium">{{ t('import.colMemberships') }}</th>
+                        <th class="px-3 py-2 font-medium">
+                            {{ t('import.colName') }}
+                        </th>
+                        <th class="px-3 py-2 font-medium">
+                            {{ t('import.colSite') }}
+                        </th>
+                        <th class="px-3 py-2 font-medium">
+                            {{ t('import.colModel') }}
+                        </th>
+                        <th class="px-3 py-2 font-medium">
+                            {{ t('import.colMgmt') }}
+                        </th>
+                        <th class="px-3 py-2 text-right font-medium">
+                            {{ t('import.colPorts') }}
+                        </th>
+                        <th class="px-3 py-2 text-right font-medium">
+                            {{ t('import.colUplinks') }}
+                        </th>
+                        <th class="px-3 py-2 text-right font-medium">
+                            {{ t('import.colMemberships') }}
+                        </th>
                     </tr>
                 </thead>
                 <tbody>
@@ -179,13 +217,23 @@ function warningText(warning: Warning): string {
                                 {{ t('import.noSite') }}
                             </span>
                         </td>
-                        <td class="px-3 py-2 text-muted-foreground">{{ row.model ?? '—' }}</td>
-                        <td class="px-3 py-2 font-mono text-xs">{{ row.mgmt_ip ?? '—' }}</td>
-                        <td class="px-3 py-2 text-right tabular-nums">{{ row.port_count }}</td>
-                        <td class="px-3 py-2 text-right tabular-nums text-muted-foreground">
+                        <td class="px-3 py-2 text-muted-foreground">
+                            {{ row.model ?? '—' }}
+                        </td>
+                        <td class="px-3 py-2 font-mono text-xs">
+                            {{ row.mgmt_ip ?? '—' }}
+                        </td>
+                        <td class="px-3 py-2 text-right tabular-nums">
+                            {{ row.port_count }}
+                        </td>
+                        <td
+                            class="px-3 py-2 text-right text-muted-foreground tabular-nums"
+                        >
                             {{ row.uplinks.length || '—' }}
                         </td>
-                        <td class="px-3 py-2 text-right tabular-nums">{{ row.memberships }}</td>
+                        <td class="px-3 py-2 text-right tabular-nums">
+                            {{ row.memberships }}
+                        </td>
                     </tr>
                 </tbody>
             </table>

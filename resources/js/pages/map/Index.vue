@@ -197,19 +197,43 @@ function exportPng(): void {
                         fill="#ffffff"
                         opacity="0.85"
                     >
-                        {{ site.code }} · {{ t('map.deviceCount', { count: site.devices_count }) }}
+                        {{ site.code }} ·
+                        {{
+                            t('map.deviceCount', { count: site.devices_count })
+                        }}
                     </text>
                 </g>
             </svg>
         </div>
 
-        <div class="flex flex-wrap gap-x-6 gap-y-2 text-sm text-muted-foreground">
+        <div
+            class="flex flex-wrap gap-x-6 gap-y-2 text-sm text-muted-foreground"
+        >
             <span class="flex items-center gap-2">
-                <svg width="34" height="8"><line x1="0" y1="4" x2="34" y2="4" stroke="#0ea5e9" stroke-width="3" /></svg>
+                <svg width="34" height="8">
+                    <line
+                        x1="0"
+                        y1="4"
+                        x2="34"
+                        y2="4"
+                        stroke="#0ea5e9"
+                        stroke-width="3"
+                    />
+                </svg>
                 {{ t('tunnel.typeKind.kerio_vpn') }}
             </span>
             <span class="flex items-center gap-2">
-                <svg width="34" height="8"><line x1="0" y1="4" x2="34" y2="4" stroke="#0ea5e9" stroke-width="3" stroke-dasharray="6 4" /></svg>
+                <svg width="34" height="8">
+                    <line
+                        x1="0"
+                        y1="4"
+                        x2="34"
+                        y2="4"
+                        stroke="#0ea5e9"
+                        stroke-width="3"
+                        stroke-dasharray="6 4"
+                    />
+                </svg>
                 {{ t('tunnel.typeKind.ipsec') }}
             </span>
             <span v-if="can.manage">{{ t('map.dragHint') }}</span>

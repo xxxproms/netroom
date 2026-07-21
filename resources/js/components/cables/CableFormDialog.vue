@@ -139,7 +139,9 @@ function save(): void {
             media: form.value.media,
             strands: form.value.media === 'fibre' ? form.value.strands : null,
             label: form.value.label || null,
-            length_cm: form.value.length_cm ? Number(form.value.length_cm) : null,
+            length_cm: form.value.length_cm
+                ? Number(form.value.length_cm)
+                : null,
             status: form.value.status,
         },
         {
@@ -196,7 +198,9 @@ function save(): void {
                     <FormField
                         id="cable-owner"
                         :label="
-                            side === 'device' ? t('device.one') : t('workplace.one')
+                            side === 'device'
+                                ? t('device.one')
+                                : t('workplace.one')
                         "
                     >
                         <select
@@ -204,7 +208,9 @@ function save(): void {
                             v-model="ownerId"
                             class="h-9 rounded-md border border-input bg-transparent px-3 text-sm shadow-xs"
                         >
-                            <option :value="null">{{ t('common.choose') }}</option>
+                            <option :value="null">
+                                {{ t('common.choose') }}
+                            </option>
                             <option
                                 v-for="owner in owners"
                                 :key="owner.id"
@@ -218,7 +224,9 @@ function save(): void {
                     <FormField
                         id="cable-target"
                         :label="
-                            side === 'device' ? t('port.number') : t('outlet.one')
+                            side === 'device'
+                                ? t('port.number')
+                                : t('outlet.one')
                         "
                         :error="errors.b_id"
                     >
@@ -227,7 +235,9 @@ function save(): void {
                             v-model="targetId"
                             class="h-9 rounded-md border border-input bg-transparent px-3 text-sm shadow-xs"
                         >
-                            <option :value="null">{{ t('common.choose') }}</option>
+                            <option :value="null">
+                                {{ t('common.choose') }}
+                            </option>
                             <template v-if="side === 'device'">
                                 <option
                                     v-for="port in ports"
@@ -237,7 +247,11 @@ function save(): void {
                                 >
                                     {{ port.name }} ·
                                     {{ t(`model.roleKind.${port.role}`) }}
-                                    {{ port.taken ? `— ${t('cable.taken')}` : '' }}
+                                    {{
+                                        port.taken
+                                            ? `— ${t('cable.taken')}`
+                                            : ''
+                                    }}
                                 </option>
                             </template>
                             <template v-else>
@@ -249,7 +263,9 @@ function save(): void {
                                 >
                                     {{ outlet.label }}
                                     {{
-                                        outlet.taken ? `— ${t('cable.taken')}` : ''
+                                        outlet.taken
+                                            ? `— ${t('cable.taken')}`
+                                            : ''
                                     }}
                                 </option>
                             </template>
@@ -268,7 +284,11 @@ function save(): void {
                             v-model="form.media"
                             class="h-9 rounded-md border border-input bg-transparent px-3 text-sm shadow-xs"
                         >
-                            <option v-for="value in media" :key="value" :value="value">
+                            <option
+                                v-for="value in media"
+                                :key="value"
+                                :value="value"
+                            >
                                 {{ t(`cable.mediaKind.${value}`) }}
                             </option>
                         </select>
@@ -286,7 +306,11 @@ function save(): void {
                             v-model.number="form.strands"
                             class="h-9 rounded-md border border-input bg-transparent px-3 text-sm shadow-xs"
                         >
-                            <option v-for="value in strands" :key="value" :value="value">
+                            <option
+                                v-for="value in strands"
+                                :key="value"
+                                :value="value"
+                            >
                                 {{ t('cable.strandCount', { count: value }) }}
                             </option>
                         </select>
@@ -297,7 +321,11 @@ function save(): void {
                         :label="t('cable.label')"
                         :error="errors.label"
                     >
-                        <Input id="cable-label" v-model="form.label" class="font-mono" />
+                        <Input
+                            id="cable-label"
+                            v-model="form.label"
+                            class="font-mono"
+                        />
                     </FormField>
 
                     <FormField

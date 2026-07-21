@@ -152,7 +152,9 @@ onKeyStroke(['k', 'K'], (event) => {
                     :key="group.key"
                     class="mb-2 last:mb-0"
                 >
-                    <p class="px-2 py-1 text-xs font-medium text-muted-foreground">
+                    <p
+                        class="px-2 py-1 text-xs font-medium text-muted-foreground"
+                    >
                         {{ t(`search.group.${group.key}`) }}
                     </p>
                     <button
@@ -166,7 +168,9 @@ onKeyStroke(['k', 'K'], (event) => {
                                 : 'hover:bg-accent/50'
                         "
                         @click="select(item)"
-                        @mousemove="activeIndex = positionOf(groupIndex, itemIndex)"
+                        @mousemove="
+                            activeIndex = positionOf(groupIndex, itemIndex)
+                        "
                     >
                         <span class="min-w-0">
                             <span class="font-medium">{{ item.title }}</span>
@@ -178,7 +182,10 @@ onKeyStroke(['k', 'K'], (event) => {
                             </span>
                         </span>
                         <CornerDownLeft
-                            v-if="positionOf(groupIndex, itemIndex) === activeIndex"
+                            v-if="
+                                positionOf(groupIndex, itemIndex) ===
+                                activeIndex
+                            "
                             class="size-3.5 shrink-0 text-muted-foreground"
                         />
                     </button>

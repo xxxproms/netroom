@@ -65,10 +65,7 @@ const found = computed(() => {
             </template>
         </PageHeader>
 
-        <EmptyState
-            v-if="!workplaces.length"
-            :message="t('workplace.empty')"
-        />
+        <EmptyState v-if="!workplaces.length" :message="t('workplace.empty')" />
 
         <EmptyState
             v-else-if="!found.length"

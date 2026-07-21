@@ -47,13 +47,20 @@ function barColor(percent: number): string {
     <Head :title="t('subnet.title')" />
 
     <div class="flex flex-col gap-6 p-4">
-        <PageHeader :title="t('subnet.title')" :description="t('subnet.listHint')">
+        <PageHeader
+            :title="t('subnet.title')"
+            :description="t('subnet.listHint')"
+        >
             <template #actions>
                 <select
                     v-if="domains.length > 1"
                     class="h-9 rounded-md border border-input bg-transparent px-3 text-sm shadow-xs"
                     :value="selectedDomainId ?? ''"
-                    @change="pickDomain(Number(($event.target as HTMLSelectElement).value))"
+                    @change="
+                        pickDomain(
+                            Number(($event.target as HTMLSelectElement).value),
+                        )
+                    "
                 >
                     <option
                         v-for="domain in domains"
@@ -118,7 +125,12 @@ function barColor(percent: number): string {
                         />
                     </div>
                     <p class="text-xs text-muted-foreground">
-                        {{ t('subnet.usage', { used: subnet.used, total: subnet.capacity }) }}
+                        {{
+                            t('subnet.usage', {
+                                used: subnet.used,
+                                total: subnet.capacity,
+                            })
+                        }}
                         · {{ subnet.utilisation }}%
                     </p>
                 </div>

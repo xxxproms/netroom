@@ -64,7 +64,11 @@ const modeOf = (portId: number, vlanId: number): VlanMode | undefined =>
 
 /** Untagged first: most ports are access ports, so that is the common click. */
 const nextMode = (current: VlanMode | undefined): VlanMode | null =>
-    current === undefined ? 'untagged' : current === 'untagged' ? 'tagged' : null;
+    current === undefined
+        ? 'untagged'
+        : current === 'untagged'
+          ? 'tagged'
+          : null;
 
 /** Which VLAN lost the PVID of a port, so that clicking on can hand it back. */
 const displaced = new Map<number, number>();
@@ -124,7 +128,8 @@ function write(portId: number, vlanId: number, mode: VlanMode | null): void {
 function stage(change: VlanChange): void {
     const rest = staged.value.filter(
         (entry) =>
-            entry.port_id !== change.port_id || entry.vlan_id !== change.vlan_id,
+            entry.port_id !== change.port_id ||
+            entry.vlan_id !== change.vlan_id,
     );
 
     const saved = props.membership[change.port_id]?.[change.vlan_id] ?? null;
@@ -262,7 +267,10 @@ const columnCount = computed(() => props.ports.length);
                                 >
                                     {{ vlan.vid }}
                                 </span>
-                                <span class="flex-1 truncate" :title="vlan.description ?? vlan.name">
+                                <span
+                                    class="flex-1 truncate"
+                                    :title="vlan.description ?? vlan.name"
+                                >
                                     {{ vlan.name }}
                                 </span>
 
@@ -308,12 +316,16 @@ const columnCount = computed(() => props.ports.length);
                                         ? 'ring-2 ring-amber-500 ring-inset'
                                         : '',
                                 ]"
-                                :style="cellStyle(vlan, modeOf(port.id, vlan.id))"
+                                :style="
+                                    cellStyle(vlan, modeOf(port.id, vlan.id))
+                                "
                                 :title="`${vlan.vid} ${vlan.name} — ${t('port.number')} ${port.name}`"
                                 @mouseenter="
                                     hovered = { port: port.id, vlan: vlan.id }
                                 "
-                                @mouseleave="hovered = { port: null, vlan: null }"
+                                @mouseleave="
+                                    hovered = { port: null, vlan: null }
+                                "
                                 @click="cycle(port.id, vlan.id)"
                             >
                                 {{

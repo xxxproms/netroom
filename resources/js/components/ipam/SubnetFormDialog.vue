@@ -25,7 +25,8 @@ const props = defineProps<{
 
 const open = defineModel<boolean>('open', { required: true });
 
-const action = () => (props.subnet ? update.form(props.subnet.id) : store.form());
+const action = () =>
+    props.subnet ? update.form(props.subnet.id) : store.form();
 </script>
 
 <template>

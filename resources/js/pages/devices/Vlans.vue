@@ -4,7 +4,10 @@ import { ArrowLeft, Save, Undo2 } from '@lucide/vue';
 import { computed, ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 import VlanMatrix from '@/components/devices/VlanMatrix.vue';
-import type { Membership, VlanChange } from '@/components/devices/VlanMatrix.vue';
+import type {
+    Membership,
+    VlanChange,
+} from '@/components/devices/VlanMatrix.vue';
 import PageHeader from '@/components/PageHeader.vue';
 import { Button } from '@/components/ui/button';
 import { index as devicesIndex, show as showDevice } from '@/routes/devices';
@@ -82,7 +85,11 @@ function save(): void {
                         <Undo2 class="size-4" />
                         {{ t('common.cancel') }}
                     </Button>
-                    <Button size="sm" :disabled="!pending || saving" @click="save">
+                    <Button
+                        size="sm"
+                        :disabled="!pending || saving"
+                        @click="save"
+                    >
                         <Save class="size-4" />
                         {{
                             pending

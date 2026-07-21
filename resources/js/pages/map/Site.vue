@@ -123,10 +123,7 @@ function exportPng(): void {
             >
                 <rect :width="WIDTH" :height="HEIGHT" fill="#f8fafc" />
 
-                <g
-                    v-for="link in links"
-                    :key="link.id"
-                >
+                <g v-for="link in links" :key="link.id">
                     <template v-if="endpoints(link).a && endpoints(link).b">
                         <line
                             :x1="endpoints(link).a.x"
@@ -145,7 +142,11 @@ function exportPng(): void {
                             font-size="12"
                             fill="#0891b2"
                         >
-                            {{ t('cable.strandCount', { count: link.strands ?? 1 }) }}
+                            {{
+                                t('cable.strandCount', {
+                                    count: link.strands ?? 1,
+                                })
+                            }}
                         </text>
                     </template>
                 </g>
@@ -168,7 +169,14 @@ function exportPng(): void {
                         stroke-width="2.5"
                         :opacity="dragging === device.id ? 0.85 : 1"
                     />
-                    <rect x="-78" y="-26" width="6" height="52" rx="3" :fill="colorOf(device)" />
+                    <rect
+                        x="-78"
+                        y="-26"
+                        width="6"
+                        height="52"
+                        rx="3"
+                        :fill="colorOf(device)"
+                    />
                     <text
                         x="0"
                         y="-3"
@@ -192,13 +200,34 @@ function exportPng(): void {
             </svg>
         </div>
 
-        <div class="flex flex-wrap gap-x-6 gap-y-2 text-sm text-muted-foreground">
+        <div
+            class="flex flex-wrap gap-x-6 gap-y-2 text-sm text-muted-foreground"
+        >
             <span class="flex items-center gap-2">
-                <svg width="34" height="8"><line x1="0" y1="4" x2="34" y2="4" stroke="#94a3b8" stroke-width="2.5" /></svg>
+                <svg width="34" height="8">
+                    <line
+                        x1="0"
+                        y1="4"
+                        x2="34"
+                        y2="4"
+                        stroke="#94a3b8"
+                        stroke-width="2.5"
+                    />
+                </svg>
                 {{ t('cable.mediaKind.utp') }}
             </span>
             <span class="flex items-center gap-2">
-                <svg width="34" height="8"><line x1="0" y1="4" x2="34" y2="4" stroke="#0891b2" stroke-width="2.5" stroke-dasharray="6 4" /></svg>
+                <svg width="34" height="8">
+                    <line
+                        x1="0"
+                        y1="4"
+                        x2="34"
+                        y2="4"
+                        stroke="#0891b2"
+                        stroke-width="2.5"
+                        stroke-dasharray="6 4"
+                    />
+                </svg>
                 {{ t('cable.mediaKind.fibre') }}
             </span>
             <span v-if="can.arrange">{{ t('map.dragHint') }}</span>

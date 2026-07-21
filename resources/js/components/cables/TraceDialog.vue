@@ -10,7 +10,7 @@ import {
     DialogHeader,
     DialogTitle,
 } from '@/components/ui/dialog';
-import type { CableEnd, TraceStep } from '@/types';
+import type { Cable, CableEnd, TraceStep } from '@/types';
 
 const { t } = useI18n();
 
@@ -25,7 +25,7 @@ const open = defineModel<boolean>('open', { required: true });
 const path = ref<TraceStep[]>([]);
 const loading = ref(false);
 
-const isCable = (step: TraceStep): boolean => step.kind === 'cable';
+const isCable = (step: TraceStep): step is Cable => step.kind === 'cable';
 
 async function load(): Promise<void> {
     loading.value = true;
@@ -83,7 +83,10 @@ watch(open, (isOpen) => {
                         <ArrowDown class="size-4" />
                         <span>{{ t(`cable.mediaKind.${step.media}`) }}</span>
                         <span v-if="step.strands">
-                            · {{ t('cable.strandCount', { count: step.strands }) }}
+                            ·
+                            {{
+                                t('cable.strandCount', { count: step.strands })
+                            }}
                         </span>
                         <span v-if="step.label" class="font-mono">
                             · {{ step.label }}
@@ -94,7 +97,7 @@ watch(open, (isOpen) => {
                     </div>
 
                     <div v-else class="rounded-lg border p-3">
-                        <EndLabel :end="(step as CableEnd)" />
+                        <EndLabel :end="step as CableEnd" />
                     </div>
                 </li>
             </ol>

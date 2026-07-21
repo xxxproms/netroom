@@ -111,28 +111,42 @@ function barColor(percent: number): string {
 
         <div class="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
             <div class="rounded-xl border p-4">
-                <p class="text-xs text-muted-foreground">{{ t('subnet.gateway') }}</p>
-                <p class="mt-1 font-mono text-sm">{{ subnet.gateway ?? '—' }}</p>
+                <p class="text-xs text-muted-foreground">
+                    {{ t('subnet.gateway') }}
+                </p>
+                <p class="mt-1 font-mono text-sm">
+                    {{ subnet.gateway ?? '—' }}
+                </p>
             </div>
             <div class="rounded-xl border p-4">
-                <p class="text-xs text-muted-foreground">{{ t('subnet.capacity') }}</p>
+                <p class="text-xs text-muted-foreground">
+                    {{ t('subnet.capacity') }}
+                </p>
                 <p class="mt-1 text-sm tabular-nums">{{ summary.capacity }}</p>
             </div>
             <div class="rounded-xl border p-4">
-                <p class="text-xs text-muted-foreground">{{ t('subnet.free') }}</p>
+                <p class="text-xs text-muted-foreground">
+                    {{ t('subnet.free') }}
+                </p>
                 <p class="mt-1 text-sm tabular-nums">{{ summary.free }}</p>
             </div>
             <div class="rounded-xl border p-4">
-                <p class="text-xs text-muted-foreground">{{ t('subnet.utilisation') }}</p>
+                <p class="text-xs text-muted-foreground">
+                    {{ t('subnet.utilisation') }}
+                </p>
                 <div class="mt-2 flex items-center gap-2">
-                    <div class="h-2 flex-1 overflow-hidden rounded-full bg-muted">
+                    <div
+                        class="h-2 flex-1 overflow-hidden rounded-full bg-muted"
+                    >
                         <div
                             class="h-full rounded-full"
                             :class="barColor(summary.utilisation)"
                             :style="{ width: `${summary.utilisation}%` }"
                         />
                     </div>
-                    <span class="text-sm tabular-nums">{{ summary.utilisation }}%</span>
+                    <span class="text-sm tabular-nums"
+                        >{{ summary.utilisation }}%</span
+                    >
                 </div>
             </div>
         </div>
@@ -155,7 +169,9 @@ function barColor(percent: number): string {
             v-slot="{ errors, processing }"
         >
             <div class="grid gap-1.5">
-                <label class="text-sm" for="address-field">{{ t('ip.address') }}</label>
+                <label class="text-sm" for="address-field">{{
+                    t('ip.address')
+                }}</label>
                 <Input
                     id="address-field"
                     name="address_text"
@@ -166,17 +182,25 @@ function barColor(percent: number): string {
                 />
             </div>
             <div class="grid gap-1.5">
-                <label class="text-sm" for="address-host">{{ t('ip.hostname') }}</label>
+                <label class="text-sm" for="address-host">{{
+                    t('ip.hostname')
+                }}</label>
                 <Input id="address-host" name="hostname" class="h-9 w-48" />
             </div>
             <div class="grid gap-1.5">
-                <label class="text-sm" for="address-status">{{ t('common.status') }}</label>
+                <label class="text-sm" for="address-status">{{
+                    t('common.status')
+                }}</label>
                 <select
                     id="address-status"
                     name="status"
                     class="h-9 rounded-md border border-input bg-transparent px-3 text-sm shadow-xs"
                 >
-                    <option v-for="value in statuses" :key="value" :value="value">
+                    <option
+                        v-for="value in statuses"
+                        :key="value"
+                        :value="value"
+                    >
                         {{ t(`ip.statusKind.${value}`) }}
                     </option>
                 </select>
@@ -195,7 +219,10 @@ function barColor(percent: number): string {
                 <Sparkles class="size-4" />
                 {{ t('ip.nextFree', { address: nextFree }) }}
             </Button>
-            <p v-if="errors.address_text" class="w-full text-sm text-destructive">
+            <p
+                v-if="errors.address_text"
+                class="w-full text-sm text-destructive"
+            >
                 {{ errors.address_text }}
             </p>
         </Form>
@@ -204,10 +231,18 @@ function barColor(percent: number): string {
             <table class="w-full text-[15px]">
                 <thead class="bg-muted/50 text-sm text-muted-foreground">
                     <tr>
-                        <th class="w-40 px-4 py-3 text-left font-medium">{{ t('ip.address') }}</th>
-                        <th class="px-4 py-3 text-left font-medium">{{ t('ip.host') }}</th>
-                        <th class="w-32 px-4 py-3 text-left font-medium">{{ t('ip.source') }}</th>
-                        <th class="w-28 px-4 py-3 text-left font-medium">{{ t('common.status') }}</th>
+                        <th class="w-40 px-4 py-3 text-left font-medium">
+                            {{ t('ip.address') }}
+                        </th>
+                        <th class="px-4 py-3 text-left font-medium">
+                            {{ t('ip.host') }}
+                        </th>
+                        <th class="w-32 px-4 py-3 text-left font-medium">
+                            {{ t('ip.source') }}
+                        </th>
+                        <th class="w-28 px-4 py-3 text-left font-medium">
+                            {{ t('common.status') }}
+                        </th>
                         <th
                             v-if="can.manage"
                             class="w-16 px-4 py-3 text-right font-medium"
@@ -248,7 +283,11 @@ function barColor(percent: number): string {
                                     class="size-4 text-muted-foreground"
                                 />
                                 <span>
-                                    {{ claim.hostname ?? claim.device?.name ?? '—' }}
+                                    {{
+                                        claim.hostname ??
+                                        claim.device?.name ??
+                                        '—'
+                                    }}
                                 </span>
                             </div>
                         </td>
@@ -278,7 +317,9 @@ function barColor(percent: number): string {
                                 variant="ghost"
                                 class="size-8 text-destructive"
                                 :title="t('ip.release')"
-                                @click="releaseReservation(reservationId(occupant)!)"
+                                @click="
+                                    releaseReservation(reservationId(occupant)!)
+                                "
                             >
                                 <Trash2 class="size-4" />
                             </Button>

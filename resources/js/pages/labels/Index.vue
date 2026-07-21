@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { Head } from '@inertiajs/vue3';
 import { MapPin, Printer, Router, Server } from '@lucide/vue';
-import type {LucideIcon} from '@lucide/vue';
+import type { LucideIcon } from '@lucide/vue';
 import { useI18n } from 'vue-i18n';
 import PageHeader from '@/components/PageHeader.vue';
 import { Button } from '@/components/ui/button';
@@ -30,7 +30,10 @@ const types: { key: 'devices' | 'racks' | 'workplaces'; icon: LucideIcon }[] = [
     <Head :title="t('labels.title')" />
 
     <div class="flex flex-col gap-6 p-4">
-        <PageHeader :title="t('labels.title')" :description="t('labels.hint')" />
+        <PageHeader
+            :title="t('labels.title')"
+            :description="t('labels.hint')"
+        />
 
         <div class="grid gap-3 sm:grid-cols-3">
             <div
@@ -38,7 +41,10 @@ const types: { key: 'devices' | 'racks' | 'workplaces'; icon: LucideIcon }[] = [
                 :key="type.key"
                 class="flex flex-col gap-3 rounded-xl border p-4"
             >
-                <component :is="type.icon" class="size-5 text-muted-foreground" />
+                <component
+                    :is="type.icon"
+                    class="size-5 text-muted-foreground"
+                />
                 <div>
                     <p class="text-2xl font-semibold tabular-nums">
                         {{ counts[type.key] }}
@@ -53,7 +59,11 @@ const types: { key: 'devices' | 'racks' | 'workplaces'; icon: LucideIcon }[] = [
                     variant="outline"
                     :disabled="counts[type.key] === 0"
                 >
-                    <a :href="`/labels/print?type=${type.key}`" target="_blank" rel="noopener">
+                    <a
+                        :href="`/labels/print?type=${type.key}`"
+                        target="_blank"
+                        rel="noopener"
+                    >
                         <Printer class="size-4" />
                         {{ t('labels.print') }}
                     </a>
