@@ -11,11 +11,13 @@ use App\Models\Port;
 use App\Models\Rack;
 use App\Models\Room;
 use App\Models\Site;
+use App\Models\Subnet;
 use App\Models\Tunnel;
 use App\Models\User;
 use App\Models\Vlan;
 use App\Models\VlanDomain;
 use App\Models\Workplace;
+use App\Support\Cidr;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Auth;
@@ -61,6 +63,7 @@ class DemoSeeder extends Seeder
         $this->workplaces();
         $this->cabling();
         $this->tunnels();
+        $this->subnets();
 
         Auth::logout();
     }
@@ -454,6 +457,53 @@ class DemoSeeder extends Seeder
                     'site_b_id' => $this->sites[$b]->id,
                 ],
                 ['type' => $type, 'status' => $status],
+            );
+        }
+    }
+
+    /**
+     * The management network. The campus switches all sit on 10.40.0.0/24, so
+     * once their mgmt IPs are entered on the devices they appear here on their
+     * own; a couple of reservations show the hand-documented side too.
+     */
+    private function subnets(): void
+    {
+        $campus = VlanDomain::firstWhere('name', 'Кампус (Северный + Южный)');
+        $mgmtVlan = Vlan::where('vlan_domain_id', $campus->id)->where('vid', 3000)->first();
+
+        $subnet = Subnet::firstOrCreate(
+            ['vlan_domain_id' => $campus->id, 'cidr' => '10.40.0.0/24'],
+            [
+                'vlan_id' => $mgmtVlan?->id,
+                'network' => Cidr::toLong('10.40.0.0'),
+                'broadcast' => Cidr::toLong('10.40.0.255'),
+                'name' => 'Управление кампуса',
+                'gateway' => '10.40.0.1',
+            ],
+        );
+
+        $firewall = Device::firstWhere('name', 'FW-CAMPUS');
+
+        $reservations = [
+            // The gateway is the campus firewall, so the reservation names it —
+            // that is documentation, not a clash.
+            ['10.40.0.1', 'Шлюз кампуса', 'gateway', $firewall?->id],
+            ['10.40.0.2', 'Резерв под будущее ядро', 'reserved', null],
+            ['10.40.0.10', 'NAS резервных копий', 'assigned', null],
+            // A genuine mistake to show the conflict check: this address is
+            // already the management IP of SW-N-CORE, reserved here by hand.
+            ['10.40.0.100', 'Ошибочный резерв', 'reserved', null],
+        ];
+
+        foreach ($reservations as [$address, $hostname, $status, $deviceId]) {
+            $subnet->addresses()->firstOrCreate(
+                ['address' => Cidr::toLong($address)],
+                [
+                    'address_text' => $address,
+                    'hostname' => $hostname,
+                    'status' => $status,
+                    'device_id' => $deviceId,
+                ],
             );
         }
     }

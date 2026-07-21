@@ -13,6 +13,7 @@ import {
     Spline,
     Server,
     Tags,
+    EthernetPort,
     Waypoints,
 } from '@lucide/vue';
 import { computed } from 'vue';
@@ -54,6 +55,7 @@ const mainNavItems = computed<NavItem[]>(() => [
     { title: t('nav.vlans'), href: vlans(), icon: Network },
     { title: t('nav.cables'), href: cables(), icon: Spline },
     { title: t('nav.workplaces'), href: workplaces(), icon: MapPin },
+    { title: t('nav.ipam'), href: subnets(), icon: EthernetPort },
     { title: t('nav.vlanDomains'), href: vlanDomains(), icon: Cable },
     { title: t('nav.models'), href: deviceModels(), icon: Tags },
 ]);

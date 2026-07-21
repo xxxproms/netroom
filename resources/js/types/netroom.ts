@@ -256,3 +256,52 @@ export type MapLink = {
     strands: number | null;
     label: string | null;
 };
+
+export type SubnetSummary = {
+    id: number;
+    cidr: string;
+    name: string | null;
+    gateway: string | null;
+    vlan: { id: number; vid: number; name: string } | null;
+    capacity: number;
+    used: number;
+    utilisation: number;
+    conflicts: number;
+};
+
+export type Subnet = {
+    id: number;
+    cidr: string;
+    name: string | null;
+    gateway: string | null;
+    notes: string | null;
+    vlan_domain_id: number;
+    vlan_id: number | null;
+    domain: { id: number; name: string };
+    vlan: { id: number; vid: number; name: string } | null;
+};
+
+export type OccupantClaim = {
+    source: 'device' | 'reservation';
+    id?: number;
+    device: { id: number; name: string | null } | null;
+    hostname: string | null;
+    status: string;
+};
+
+export type Occupant = {
+    address: string;
+    long: number;
+    is_gateway: boolean;
+    conflict: boolean;
+    claims: OccupantClaim[];
+};
+
+export type SubnetUsage = {
+    capacity: number;
+    used: number;
+    free: number;
+    utilisation: number;
+    occupants: Occupant[];
+    conflicts: number;
+};

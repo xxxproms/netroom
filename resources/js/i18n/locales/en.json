@@ -16,7 +16,7 @@
         "cables": "Cables",
         "tunnels": "VPN tunnels",
         "workplaces": "Workplaces",
-        "ipam": "IPAM",
+        "ipam": "IP addresses",
         "map": "Network map",
         "admin": "Administration",
         "users": "Users",
@@ -330,6 +330,45 @@
             "up": "Up",
             "down": "Down",
             "planned": "Planned"
+        }
+    },
+    "subnet": {
+        "title": "Subnets (IPAM)",
+        "listHint": "The subnets of a VLAN plan and how full each is",
+        "new": "New subnet",
+        "edit": "Edit subnet",
+        "hint": "A subnet belongs to a VLAN plan, like everything else",
+        "cidr": "Subnet (CIDR)",
+        "gateway": "Gateway",
+        "namePlaceholder": "Management, servers…",
+        "noVlan": "No VLAN",
+        "unnamed": "Unnamed",
+        "empty": "This plan has no subnets yet",
+        "usage": "{used} of {total}",
+        "capacity": "Capacity",
+        "free": "Free",
+        "utilisation": "Utilisation",
+        "conflictWarning": "{count} address conflicts — one address claimed twice",
+        "noAddresses": "No addresses are in use in this subnet yet"
+    },
+    "ip": {
+        "address": "Address",
+        "host": "What is here",
+        "hostname": "Hostname",
+        "source": "Source",
+        "reserve": "Reserve",
+        "release": "Release",
+        "releaseConfirm": "Release this address?",
+        "nextFree": "Free: {address}",
+        "sourceKind": {
+            "device": "Device",
+            "reservation": "Reservation"
+        },
+        "statusKind": {
+            "reserved": "Reserved",
+            "assigned": "Assigned",
+            "gateway": "Gateway",
+            "excluded": "Excluded"
         }
     }
 }

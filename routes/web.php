@@ -4,6 +4,7 @@ use App\Http\Controllers\CableController;
 use App\Http\Controllers\CableTargetController;
 use App\Http\Controllers\DeviceController;
 use App\Http\Controllers\DeviceModelController;
+use App\Http\Controllers\IpAddressController;
 use App\Http\Controllers\NetworkMapController;
 use App\Http\Controllers\OutletController;
 use App\Http\Controllers\PortController;
@@ -12,6 +13,7 @@ use App\Http\Controllers\RackElevationController;
 use App\Http\Controllers\RoomController;
 use App\Http\Controllers\SiteContextController;
 use App\Http\Controllers\SiteController;
+use App\Http\Controllers\SubnetController;
 use App\Http\Controllers\TraceController;
 use App\Http\Controllers\TunnelController;
 use App\Http\Controllers\VlanController;
@@ -63,6 +65,11 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('tunnels', [TunnelController::class, 'store'])->name('tunnels.store');
     Route::patch('tunnels/{tunnel}', [TunnelController::class, 'update'])->name('tunnels.update');
     Route::delete('tunnels/{tunnel}', [TunnelController::class, 'destroy'])->name('tunnels.destroy');
+
+    Route::resource('subnets', SubnetController::class)->except(['create', 'edit']);
+    Route::post('subnets/{subnet}/addresses', [IpAddressController::class, 'store'])->name('ip-addresses.store');
+    Route::patch('ip-addresses/{ipAddress}', [IpAddressController::class, 'update'])->name('ip-addresses.update');
+    Route::delete('ip-addresses/{ipAddress}', [IpAddressController::class, 'destroy'])->name('ip-addresses.destroy');
 
     Route::post('vlans/copy', [VlanController::class, 'copy'])->name('vlans.copy');
     Route::resource('vlans', VlanController::class)->except(['create', 'edit', 'show']);
