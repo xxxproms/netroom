@@ -39,5 +39,9 @@
     "A cable cannot end where it starts.": "Кабель не может начинаться и заканчиваться в одной точке.",
     "Both ends must be at the same site.": "Оба конца должны быть в одном филиале.",
     "There is already a cable in this port.": "В этот порт уже подключён кабель.",
-    "Imported :devices switches and :memberships VLAN assignments.": "Импортировано коммутаторов: :devices, привязок VLAN: :memberships."
+    "Imported :devices switches and :memberships VLAN assignments.": "Импортировано коммутаторов: :devices, привязок VLAN: :memberships.",
+    "Labels": "Этикетки",
+    "Print": "Печать",
+    ":count labels": ":count этикеток",
+    "Nothing to label here.": "Здесь нечего маркировать."
 }

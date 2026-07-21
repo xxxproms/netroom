@@ -9,6 +9,7 @@ import {
     FolderGit2,
     LayoutGrid,
     MapPin,
+    QrCode,
     Network,
     Router,
     Spline,
@@ -33,7 +34,7 @@ import {
     SidebarMenuItem,
 } from '@/components/ui/sidebar';
 import { usePermissions, Permission } from '@/composables/usePermissions';
-import { dashboard, importMethod, map } from '@/routes';
+import { dashboard, importMethod, labels, map } from '@/routes';
 import { index as cables } from '@/routes/cables';
 import { index as deviceModels } from '@/routes/device-models';
 import { index as devices } from '@/routes/devices';
@@ -62,6 +63,7 @@ const mainNavItems = computed<NavItem[]>(() => [
     { title: t('nav.ipam'), href: subnets(), icon: EthernetPort },
     { title: t('nav.vlanDomains'), href: vlanDomains(), icon: Cable },
     { title: t('nav.models'), href: deviceModels(), icon: Tags },
+    { title: t('nav.labels'), href: labels(), icon: QrCode },
     ...(can(Permission.importExport)
         ? [{ title: t('nav.import'), href: importMethod(), icon: FileUp }]
         : []),

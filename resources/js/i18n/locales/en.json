@@ -24,7 +24,8 @@
         "settings": "Settings",
         "repository": "Repository",
         "documentation": "Documentation",
-        "import": "Import"
+        "import": "Import",
+        "labels": "Labels"
     },
     "common": {
         "create": "Create",
@@ -465,6 +466,17 @@
             "rooms": "Rooms",
             "subnets": "Subnets",
             "vlans": "VLANs"
+        }
+    },
+    "labels": {
+        "title": "Labels",
+        "hint": "QR labels for hardware and workplaces",
+        "print": "Print",
+        "qrHint": "Each label carries a QR code linking to the item's page in the panel — point a phone camera at it to open the documentation.",
+        "type": {
+            "devices": "Devices",
+            "racks": "Racks",
+            "workplaces": "Workplaces"
         }
     }
 }
