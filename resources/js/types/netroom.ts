@@ -113,6 +113,8 @@ export type Port = {
     is_uplink: boolean;
     enabled: boolean;
     description: string | null;
+    rear_port_id?: number | null;
+    link?: CableLink | null;
 };
 
 export type Device = {
@@ -141,3 +143,74 @@ export type RackDetail = Rack & {
     room: { id: number; name: string };
     site: SiteSummary;
 };
+
+export type Workplace = {
+    id: number;
+    name: string;
+    person: string | null;
+    floor: string | null;
+    notes?: string | null;
+    site_id?: number;
+    room_id?: number | null;
+    outlets_count?: number;
+    room: { id: number; name: string } | null;
+    site?: SiteSummary;
+    outlets?: Outlet[];
+};
+
+export type Outlet = {
+    id: number;
+    label: string;
+    media: string;
+    notes: string | null;
+    link?: CableLink | null;
+};
+
+/** One end of a cable: a device port or a socket at a workplace. */
+export type CableEnd =
+    | {
+          kind: 'port';
+          id: number;
+          name: string;
+          role: string;
+          media: string;
+          description: string | null;
+          device: { id: number; name: string; kind: string; model: string };
+      }
+    | {
+          kind: 'outlet';
+          id: number;
+          label: string;
+          media: string;
+          workplace: {
+              id: number;
+              name: string;
+              person: string | null;
+              room: string | null;
+          };
+      };
+
+export type Cable = {
+    kind: 'cable';
+    id: number;
+    media: string;
+    strands: number | null;
+    label: string | null;
+    length_cm: number | null;
+    color: string | null;
+    status: string;
+};
+
+export type CableRow = Cable & {
+    site: SiteSummary;
+    a: CableEnd;
+    b: CableEnd;
+};
+
+export type CableLink = {
+    cable: Cable;
+    far: CableEnd | null;
+};
+
+/** A trace alternates ends and the cables between them. */
+export type TraceStep = CableEnd | Cable;

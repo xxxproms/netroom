@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Actions\CreatePortsFromModel;
 use App\Http\Requests\DeviceRequest;
+use App\Models\Cable;
 use App\Models\Device;
 use App\Models\DeviceModel;
 use App\Models\Port;
@@ -11,6 +12,7 @@ use App\Models\Rack;
 use App\Models\Room;
 use App\Models\Site;
 use App\Support\SiteContext;
+use App\Support\Terminations;
 use Illuminate\Http\RedirectResponse;
 use Inertia\Inertia;
 use Inertia\Response;
@@ -49,6 +51,8 @@ class DeviceController extends Controller
             'rack:id,name,room_id',
             'rack.room:id,name',
             'ports' => fn ($query) => $query->orderBy('role')->orderBy('number'),
+            'ports.cableAsA.b',
+            'ports.cableAsB.a',
         ]);
 
         return Inertia::render('devices/Show', [
@@ -74,15 +78,24 @@ class DeviceController extends Controller
                     'is_uplink' => $port->is_uplink,
                     'enabled' => $port->enabled,
                     'description' => $port->description,
+                    'rear_port_id' => $port->rear_port_id,
+                    // What is on the other side of the cable in this port.
+                    'link' => Terminations::link($port),
                 ])->all(),
             ],
             'models' => $this->models(),
             'racks' => $this->racks($device->site_id),
             'statuses' => Device::STATUSES,
             'faces' => Device::FACES,
+            'cable' => [
+                'media' => Cable::MEDIA,
+                'statuses' => Cable::STATUSES,
+                'strands' => Cable::STRANDS,
+            ],
             'can' => [
                 'update' => request()->user()->can('update', $device),
                 'delete' => request()->user()->can('delete', $device),
+                'cable' => request()->user()->can('create', Cable::class),
             ],
         ]);
     }

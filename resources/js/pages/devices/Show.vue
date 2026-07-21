@@ -24,7 +24,8 @@ const props = defineProps<{
     racks: Rack[];
     statuses: string[];
     faces: string[];
-    can: { update: boolean; delete: boolean };
+    cable: { media: string[]; statuses: string[]; strands: number[] };
+    can: { update: boolean; delete: boolean; cable: boolean };
 }>();
 
 defineOptions({
@@ -148,7 +149,13 @@ function remove(): void {
             {{ device.notes }}
         </p>
 
-        <PortTable :ports="device.ports ?? []" :editable="can.update" />
+        <PortTable
+            :ports="device.ports ?? []"
+            :editable="can.update"
+            :site-id="device.site_id!"
+            :can-cable="can.cable"
+            :cable="cable"
+        />
     </div>
 
     <DeviceFormDialog

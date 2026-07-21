@@ -3,14 +3,18 @@
 namespace Database\Seeders;
 
 use App\Actions\CreatePortsFromModel;
+use App\Models\Cable;
 use App\Models\Device;
 use App\Models\DeviceModel;
+use App\Models\Outlet;
+use App\Models\Port;
 use App\Models\Rack;
 use App\Models\Room;
 use App\Models\Site;
 use App\Models\User;
 use App\Models\Vlan;
 use App\Models\VlanDomain;
+use App\Models\Workplace;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Auth;
@@ -53,6 +57,8 @@ class DemoSeeder extends Seeder
         $this->vlans();
         $this->rooms();
         $this->devices();
+        $this->workplaces();
+        $this->cabling();
 
         Auth::logout();
     }
@@ -212,6 +218,8 @@ class DemoSeeder extends Seeder
             ['NORTH', 'Кроссовая 2-го этажа', '2 этаж', 'other', [
                 ['Шкаф 2-1', 12, 'wall_cabinet'],
             ]],
+            ['NORTH', 'Кабинет 204', '2 этаж', 'office', []],
+            ['NORTH', 'Приёмная', '2 этаж', 'office', []],
             ['SOUTH', 'Серверная', '1 этаж', 'server_room', [
                 ['Стойка 1', 42, 'rack'],
             ]],
@@ -306,6 +314,119 @@ class DemoSeeder extends Seeder
             $this->describePorts($device);
             $this->assignVlans($device);
         }
+    }
+
+    /**
+     * Desks, tills and cameras: the far ends of the runs wired up below.
+     */
+    private function workplaces(): void
+    {
+        $workplaces = [
+            // site, name, person, room, floor, outlet labels
+            ['NORTH', 'Каб. 204, место 1', 'Иванова А. С.', 'Кабинет 204', '2 этаж', ['204-1', '204-2']],
+            ['NORTH', 'Каб. 204, место 2', 'Петров В. И.', 'Кабинет 204', '2 этаж', ['204-3']],
+            ['NORTH', 'Каб. 204, место 3', 'Сидорова М. П.', 'Кабинет 204', '2 этаж', ['204-4']],
+            ['NORTH', 'Приёмная', 'Королёва Е. А.', 'Приёмная', '2 этаж', ['205-1', '205-2']],
+            ['NORTH', 'Камера, главный вход', null, null, '1 этаж', ['CAM-01']],
+            ['NORTH', 'Камера, парковка', null, null, '1 этаж', ['CAM-02']],
+            ['NORTH', 'МФУ, 2 этаж', null, 'Кабинет 204', '2 этаж', ['204-5']],
+            ['NORTH', 'Точка доступа, холл', null, null, '1 этаж', ['AP-01']],
+            ['SOUTH', 'Касса 1', 'Абдуллина Г. Т.', null, '1 этаж', ['K1-1']],
+            ['SOUTH', 'Касса 2', 'Ким Д. В.', null, '1 этаж', ['K2-1']],
+            ['CITY', 'Каб. 301, место 1', 'Смирнов А. А.', null, '3 этаж', ['301-1']],
+            ['PLANT', 'Склад, терминал', 'Ли С. В.', null, '1 этаж', ['SK-1']],
+        ];
+
+        foreach ($workplaces as [$siteCode, $name, $person, $roomName, $floor, $labels]) {
+            $site = $this->sites[$siteCode];
+
+            $room = $roomName === null ? null : Room::where('site_id', $site->id)
+                ->where('name', $roomName)
+                ->first();
+
+            $workplace = Workplace::firstOrCreate(
+                ['site_id' => $site->id, 'name' => $name],
+                ['room_id' => $room?->id, 'person' => $person, 'floor' => $floor],
+            );
+
+            foreach ($labels as $label) {
+                $workplace->outlets()->firstOrCreate(['label' => $label], ['media' => 'rj45']);
+            }
+        }
+    }
+
+    /**
+     * Wires the estate the way it is actually built: a desk is never plugged
+     * into a switch directly. The patch cord goes switch → panel front, and
+     * the permanent line runs panel rear → the socket on the wall.
+     */
+    private function cabling(): void
+    {
+        $panel = Device::firstWhere('name', 'PP-N-01');
+        $switch = Device::firstWhere('name', 'SW-N-01');
+
+        if ($panel instanceof Device && $switch instanceof Device) {
+            $outlets = Outlet::whereHas(
+                'workplace',
+                fn ($query) => $query->where('site_id', $this->sites['NORTH']->id),
+            )->orderBy('id')->get();
+
+            foreach ($outlets as $index => $outlet) {
+                $number = $index + 1;
+
+                $front = $panel->ports()->where('role', 'front')->where('number', $number)->first();
+                $rear = $panel->ports()->where('role', 'rear')->where('number', $number)->first();
+                $port = $switch->ports()->where('role', 'network')->where('number', $number)->first();
+
+                if (! $front || ! $rear || ! $port) {
+                    continue;
+                }
+
+                $this->connect($port, $front, 'utp', null, sprintf('PC-%02d', $number), 150);
+                $this->connect($rear, $outlet, 'utp', null, sprintf('L-%02d', $number), 2500 + $number * 100);
+            }
+        }
+
+        // The complexes stand side by side and are joined by their own fibre.
+        $northOptic = Device::firstWhere('name', 'SW-N-OPT');
+        $southOptic = Device::firstWhere('name', 'SW-S-OPT');
+
+        if ($northOptic instanceof Device && $southOptic instanceof Device) {
+            $this->connect(
+                $northOptic->ports()->where('number', 3)->first(),
+                $southOptic->ports()->where('number', 3)->first(),
+                'fibre',
+                2,
+                'FO-NS-01',
+                18000,
+            );
+        }
+    }
+
+    private function connect(
+        ?Port $a,
+        Port|Outlet|null $b,
+        string $media,
+        ?int $strands,
+        string $label,
+        int $lengthCm,
+    ): void {
+        if ($a === null || $b === null || $a->cable() || $b->cable()) {
+            return;
+        }
+
+        Cable::create([
+            'site_id' => $a->device->site_id,
+            'a_type' => $a->getMorphClass(),
+            'a_id' => $a->id,
+            'b_type' => $b->getMorphClass(),
+            'b_id' => $b->id,
+            'media' => $media,
+            'strands' => $strands,
+            'label' => $label,
+            'length_cm' => $lengthCm,
+            'status' => 'connected',
+        ]);
     }
 
     /**

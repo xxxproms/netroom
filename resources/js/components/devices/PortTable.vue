@@ -1,12 +1,24 @@
 <script setup lang="ts">
 import { router } from '@inertiajs/vue3';
-import { ArrowUpFromLine, Check, Pencil, X } from '@lucide/vue';
+import {
+    ArrowUpFromLine,
+    Check,
+    Pencil,
+    Plug,
+    Route as RouteIcon,
+    Unplug,
+    X,
+} from '@lucide/vue';
 import { computed, ref } from 'vue';
 import { useI18n } from 'vue-i18n';
+import CableFormDialog from '@/components/cables/CableFormDialog.vue';
+import EndLabel from '@/components/cables/EndLabel.vue';
+import TraceDialog from '@/components/cables/TraceDialog.vue';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { update } from '@/routes/ports';
+import { destroy as removeCable } from '@/routes/cables';
+import { trace, update } from '@/routes/ports';
 import type { Port } from '@/types';
 
 const { t } = useI18n();
@@ -14,6 +26,9 @@ const { t } = useI18n();
 const props = defineProps<{
     ports: Port[];
     editable: boolean;
+    siteId: number;
+    canCable: boolean;
+    cable: { media: string[]; statuses: string[]; strands: number[] };
 }>();
 
 /** Patch panels list their front and rear sides separately. */
@@ -28,6 +43,17 @@ const groups = computed(() => {
 
 const editingId = ref<number | null>(null);
 const draft = ref('');
+
+const connecting = ref<Port | null>(null);
+const tracing = ref<Port | null>(null);
+
+function disconnect(port: Port): void {
+    if (port.link && confirm(t('cable.disconnectConfirm'))) {
+        router.delete(removeCable(port.link.cable.id).url, {
+            preserveScroll: true,
+        });
+    }
+}
 
 function edit(port: Port): void {
     editingId.value = port.id;
@@ -93,10 +119,10 @@ function toggleUplink(port: Port): void {
                         <th class="px-4 py-3 text-left font-medium">
                             {{ t('port.description') }}
                         </th>
-                        <th
-                            v-if="editable"
-                            class="w-24 px-4 py-3 text-right font-medium"
-                        >
+                        <th class="px-4 py-3 text-left font-medium">
+                            {{ t('cable.connectedTo') }}
+                        </th>
+                        <th class="w-36 px-4 py-3 text-right font-medium">
                             {{ t('common.actions') }}
                         </th>
                     </tr>
@@ -165,8 +191,48 @@ function toggleUplink(port: Port): void {
                                 </Badge>
                             </span>
                         </td>
-                        <td v-if="editable" class="px-2 py-1.5 text-right">
+                        <td class="px-4 py-2">
+                            <EndLabel
+                                v-if="port.link?.far"
+                                :end="port.link.far"
+                            />
+                            <span v-else class="text-sm text-muted-foreground">
+                                {{ t('cable.notConnected') }}
+                            </span>
+                        </td>
+                        <td class="px-2 py-1.5 text-right whitespace-nowrap">
                             <Button
+                                v-if="port.link"
+                                size="icon"
+                                variant="ghost"
+                                class="size-8"
+                                :title="t('trace.title')"
+                                @click="tracing = port"
+                            >
+                                <RouteIcon class="size-4" />
+                            </Button>
+                            <Button
+                                v-if="canCable && !port.link"
+                                size="icon"
+                                variant="ghost"
+                                class="size-8"
+                                :title="t('cable.connect')"
+                                @click="connecting = port"
+                            >
+                                <Plug class="size-4" />
+                            </Button>
+                            <Button
+                                v-if="canCable && port.link"
+                                size="icon"
+                                variant="ghost"
+                                class="size-8"
+                                :title="t('cable.disconnect')"
+                                @click="disconnect(port)"
+                            >
+                                <Unplug class="size-4" />
+                            </Button>
+                            <Button
+                                v-if="editable"
                                 size="icon"
                                 variant="ghost"
                                 class="size-8"
@@ -175,15 +241,15 @@ function toggleUplink(port: Port): void {
                             >
                                 <ArrowUpFromLine
                                     class="size-4"
-                                    :class="{
-                                        'text-primary': port.is_uplink,
-                                    }"
+                                    :class="{ 'text-primary': port.is_uplink }"
                                 />
                             </Button>
                             <Button
+                                v-if="editable"
                                 size="icon"
                                 variant="ghost"
                                 class="size-8"
+                                :title="t('common.edit')"
                                 @click="edit(port)"
                             >
                                 <Pencil class="size-4" />
@@ -194,4 +260,27 @@ function toggleUplink(port: Port): void {
             </table>
         </div>
     </section>
+
+    <CableFormDialog
+        v-if="connecting"
+        :key="connecting.id"
+        :open="true"
+        :from-type="'port'"
+        :from-id="connecting.id"
+        :from-label="connecting.name"
+        :site-id="siteId"
+        :media="cable.media"
+        :statuses="cable.statuses"
+        :strands="cable.strands"
+        @update:open="connecting = null"
+    />
+
+    <TraceDialog
+        v-if="tracing"
+        :key="`trace-${tracing.id}`"
+        :open="true"
+        :url="trace(tracing.id).url"
+        :title="tracing.name"
+        @update:open="tracing = null"
+    />
 </template>

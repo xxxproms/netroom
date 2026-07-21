@@ -25,5 +25,18 @@
     "This port belongs to another device.": "Этот порт принадлежит другому устройству.",
     "This VLAN is not in the site's plan.": "Этого VLAN нет в плане филиала.",
     "VLAN domain": "VLAN-домен",
-    "code": "код"
+    "code": "код",
+    "Workplace created.": "Рабочее место создано.",
+    "Workplace updated.": "Рабочее место обновлено.",
+    "Workplace deleted.": "Рабочее место удалено.",
+    "Outlet added.": "Розетка добавлена.",
+    "Outlet updated.": "Розетка обновлена.",
+    "Outlet deleted.": "Розетка удалена.",
+    "Cable created.": "Кабель подключён.",
+    "Cable updated.": "Кабель обновлён.",
+    "Cable removed.": "Кабель удалён.",
+    "This cable end no longer exists.": "Этого конца кабеля больше нет.",
+    "A cable cannot end where it starts.": "Кабель не может начинаться и заканчиваться в одной точке.",
+    "Both ends must be at the same site.": "Оба конца должны быть в одном филиале.",
+    "There is already a cable in this port.": "В этот порт уже подключён кабель."
 }

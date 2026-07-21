@@ -44,6 +44,18 @@ class Device extends Model
     public const STATUSES = ['active', 'spare', 'failed', 'decommissioned'];
 
     /**
+     * The database cascades a device's ports when it goes, but that skips the
+     * model events that clear the cables in them. Deleting the ports through
+     * Eloquent first lets those fire.
+     */
+    protected static function booted(): void
+    {
+        static::deleting(function (Device $device): void {
+            $device->ports->each->delete();
+        });
+    }
+
+    /**
      * @return list<string>
      */
     protected function auditableAttributes(): array

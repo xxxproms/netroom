@@ -1,16 +1,21 @@
 <?php
 
+use App\Http\Controllers\CableController;
+use App\Http\Controllers\CableTargetController;
 use App\Http\Controllers\DeviceController;
 use App\Http\Controllers\DeviceModelController;
+use App\Http\Controllers\OutletController;
 use App\Http\Controllers\PortController;
 use App\Http\Controllers\RackController;
 use App\Http\Controllers\RackElevationController;
 use App\Http\Controllers\RoomController;
 use App\Http\Controllers\SiteContextController;
 use App\Http\Controllers\SiteController;
+use App\Http\Controllers\TraceController;
 use App\Http\Controllers\VlanController;
 use App\Http\Controllers\VlanDomainController;
 use App\Http\Controllers\VlanMatrixController;
+use App\Http\Controllers\WorkplaceController;
 use Illuminate\Support\Facades\Route;
 
 Route::inertia('/', 'Welcome')->name('home');
@@ -36,6 +41,17 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::put('devices/{device}/vlans', [VlanMatrixController::class, 'update'])->name('devices.vlans.update');
     Route::resource('device-models', DeviceModelController::class)->except(['create', 'edit', 'show']);
     Route::resource('vlan-domains', VlanDomainController::class)->except(['create', 'edit', 'show']);
+
+    Route::resource('workplaces', WorkplaceController::class)->except(['create', 'edit']);
+    Route::post('workplaces/{workplace}/outlets', [OutletController::class, 'store'])->name('outlets.store');
+    Route::patch('outlets/{outlet}', [OutletController::class, 'update'])->name('outlets.update');
+    Route::delete('outlets/{outlet}', [OutletController::class, 'destroy'])->name('outlets.destroy');
+
+    Route::get('cables/targets', [CableTargetController::class, 'index'])->name('cables.targets');
+    Route::resource('cables', CableController::class)->only(['index', 'store', 'update', 'destroy']);
+
+    Route::get('ports/{port}/trace', [TraceController::class, 'port'])->name('ports.trace');
+    Route::get('outlets/{outlet}/trace', [TraceController::class, 'outlet'])->name('outlets.trace');
 
     Route::post('vlans/copy', [VlanController::class, 'copy'])->name('vlans.copy');
     Route::resource('vlans', VlanController::class)->except(['create', 'edit', 'show']);

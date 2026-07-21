@@ -2,8 +2,11 @@
 
 namespace App\Providers;
 
+use App\Models\Outlet;
+use App\Models\Port;
 use App\Support\SiteContext;
 use Carbon\CarbonImmutable;
+use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\ServiceProvider;
@@ -27,6 +30,13 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
         $this->configureDefaults();
+
+        // Cable ends are stored as "port" and "outlet" rather than as class
+        // names, so the rows stay readable and survive a class being moved.
+        Relation::morphMap([
+            'port' => Port::class,
+            'outlet' => Outlet::class,
+        ]);
     }
 
     /**

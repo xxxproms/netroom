@@ -13,7 +13,7 @@
         "models": "Device models",
         "vlans": "VLANs",
         "vlanDomains": "VLAN domains",
-        "cables": "Cabling",
+        "cables": "Cables",
         "tunnels": "VPN tunnels",
         "workplaces": "Workplaces",
         "ipam": "IPAM",
@@ -45,7 +45,9 @@
         "loading": "Loading…",
         "back": "Back",
         "deleteConfirm": "Delete permanently?",
-        "optional": "optional"
+        "optional": "optional",
+        "choose": "Choose",
+        "nothingFound": "Nothing found"
     },
     "site": {
         "all": "All sites",
@@ -242,5 +244,62 @@
         "noVlans": "The site plan has no VLANs yet",
         "saveCount": "Save ({count})",
         "backToDevice": "Back to the device"
+    },
+    "workplace": {
+        "title": "Workplaces",
+        "one": "Workplace",
+        "new": "New workplace",
+        "edit": "Edit workplace",
+        "person": "Person",
+        "noPerson": "Nobody named",
+        "noRoom": "No room",
+        "empty": "No workplaces yet",
+        "search": "Name, person, room",
+        "hint": "Where a cable ends up: a desk, a till, a camera"
+    },
+    "outlet": {
+        "title": "Outlets",
+        "one": "Outlet",
+        "new": "Add an outlet",
+        "label": "Label",
+        "empty": "This workplace has no outlets yet"
+    },
+    "cable": {
+        "title": "Cable journal",
+        "journalHint": "Every run: from where, to where, and in what",
+        "new": "Connect a cable",
+        "connect": "Connect",
+        "disconnect": "Disconnect",
+        "disconnectConfirm": "Remove the cable? The port becomes free.",
+        "connectedTo": "Goes to",
+        "notConnected": "Not connected",
+        "otherEnd": "The other end",
+        "toDevice": "To a device",
+        "toWorkplace": "To a workplace",
+        "fromHint": "This end: {end}",
+        "taken": "taken",
+        "media": "Cable type",
+        "mediaKind": {
+            "utp": "Twisted pair",
+            "fibre": "Fibre"
+        },
+        "strands": "Strands",
+        "strandCount": "{count} strand | {count} strands",
+        "label": "Label",
+        "lengthCm": "Length, cm",
+        "cm": "cm",
+        "endA": "End A",
+        "endB": "End B",
+        "empty": "No cables yet",
+        "search": "Label, device, person",
+        "statusKind": {
+            "connected": "Connected",
+            "planned": "Planned",
+            "decommissioned": "Decommissioned"
+        }
+    },
+    "trace": {
+        "title": "Cable trace",
+        "nothing": "Nothing is plugged in here"
     }
 }

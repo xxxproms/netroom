@@ -31,10 +31,10 @@ use Illuminate\Support\Carbon;
     'device_id', 'name', 'number', 'media', 'speed_mbps', 'role',
     'rear_port_id', 'is_uplink', 'enabled', 'description',
 ])]
-class Port extends Model
+class Port extends Model implements Concerns\Terminates
 {
     /** @use HasFactory<PortFactory> */
-    use HasFactory, RecordsActivity;
+    use Concerns\TerminatesCables, HasFactory, RecordsActivity;
 
     /**
      * @return array<string, string>
