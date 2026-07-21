@@ -13,6 +13,7 @@ use App\Http\Controllers\PortController;
 use App\Http\Controllers\RackController;
 use App\Http\Controllers\RackElevationController;
 use App\Http\Controllers\RoomController;
+use App\Http\Controllers\SearchController;
 use App\Http\Controllers\SiteContextController;
 use App\Http\Controllers\SiteController;
 use App\Http\Controllers\SubnetController;
@@ -28,6 +29,7 @@ Route::inertia('/', 'Welcome')->name('home');
 
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('dashboard', DashboardController::class)->name('dashboard');
+    Route::get('search', SearchController::class)->name('search');
 
     // The site picker in the header.
     Route::put('context/site', [SiteContextController::class, 'update'])->name('context.site');

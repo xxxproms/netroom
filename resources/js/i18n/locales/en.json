@@ -452,5 +452,19 @@
             "IpAddress": "IP address",
             "Tunnel": "Tunnel"
         }
+    },
+    "search": {
+        "trigger": "Search",
+        "placeholder": "Search devices, workplaces, VLANs, subnets…",
+        "hint": "Type at least two characters",
+        "empty": "Nothing found",
+        "group": {
+            "devices": "Devices",
+            "workplaces": "Workplaces",
+            "sites": "Sites",
+            "rooms": "Rooms",
+            "subnets": "Subnets",
+            "vlans": "VLANs"
+        }
     }
 }
