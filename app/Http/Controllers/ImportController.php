@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Support\Export\InventoryExport;
 use App\Support\Import\ApplySwitchImport;
 use App\Support\Import\SwitchWorkbookParser;
 use App\Support\Permissions;
@@ -11,6 +12,7 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Inertia\Inertia;
 use Inertia\Response;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 
 /**
  * Bringing the department's spreadsheet in: upload, look at exactly what would
@@ -22,6 +24,7 @@ class ImportController extends Controller
     public function __construct(
         private readonly SwitchWorkbookParser $parser,
         private readonly ApplySwitchImport $apply,
+        private readonly InventoryExport $export,
     ) {}
 
     private function authorizeImport(): void
@@ -99,5 +102,22 @@ class ImportController extends Controller
         ]);
 
         return to_route('devices.index');
+    }
+
+    /**
+     * Hand the current scope back as a workbook — the export half of the pair.
+     */
+    public function export(): StreamedResponse
+    {
+        $this->authorizeImport();
+
+        $contents = $this->export->contents();
+        $filename = 'netroom-'.now()->format('Y-m-d').'.xlsx';
+
+        return response()->streamDownload(
+            fn () => print ($contents),
+            $filename,
+            ['Content-Type' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'],
+        );
     }
 }

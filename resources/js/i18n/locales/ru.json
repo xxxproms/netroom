@@ -408,7 +408,10 @@
         "wGarbled": "«{switch}»: имя в сломанной кодировке",
         "wMissingSheet": "«{switch}»: лист «{sheet}» не найден",
         "wNoSheet": "«{switch}»: нет листа с матрицей портов",
-        "wPortMismatch": "«{switch}»: портов в листе ({sheet_ports}) больше, чем у модели ({model_ports})"
+        "wPortMismatch": "«{switch}»: портов в листе ({sheet_ports}) больше, чем у модели ({model_ports})",
+        "exportTitle": "Экспорт",
+        "exportHint": "Выгрузить задокументированную сеть (устройства, VLAN, подсети, рабочие места) в книгу Excel — резервная копия по текущему филиалу.",
+        "exportButton": "Скачать .xlsx"
     },
     "dashboard": {
         "title": "Дашборд",

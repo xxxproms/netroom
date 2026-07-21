@@ -82,6 +82,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('import', [ImportController::class, 'create'])->name('import');
     Route::post('import/preview', [ImportController::class, 'preview'])->name('import.preview');
     Route::post('import/commit', [ImportController::class, 'commit'])->name('import.commit');
+    Route::get('export', [ImportController::class, 'export'])->name('export');
 
     Route::post('vlans/copy', [VlanController::class, 'copy'])->name('vlans.copy');
     Route::resource('vlans', VlanController::class)->except(['create', 'edit', 'show']);

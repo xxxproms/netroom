@@ -408,7 +408,10 @@
         "wGarbled": "\"{switch}\": name in a broken encoding",
         "wMissingSheet": "\"{switch}\": sheet \"{sheet}\" not found",
         "wNoSheet": "\"{switch}\": no port matrix sheet",
-        "wPortMismatch": "\"{switch}\": more ports in the sheet ({sheet_ports}) than the model has ({model_ports})"
+        "wPortMismatch": "\"{switch}\": more ports in the sheet ({sheet_ports}) than the model has ({model_ports})",
+        "exportTitle": "Export",
+        "exportHint": "Download the documented network (devices, VLANs, subnets, workplaces) as an Excel workbook — a backup of the current site scope.",
+        "exportButton": "Download .xlsx"
     },
     "dashboard": {
         "title": "Dashboard",

@@ -152,3 +152,18 @@ test('a non-spreadsheet upload is refused', function () {
         ])
         ->assertSessionHasErrors('file');
 });
+
+test('the export hands back a spreadsheet', function () {
+    actingAs($this->engineer)
+        ->get('/export')
+        ->assertOk()
+        ->assertDownload()
+        ->assertHeader('content-type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+});
+
+test('a technician cannot export', function () {
+    $technician = User::factory()->create(['has_all_sites' => true]);
+    $technician->assignRole('technician');
+
+    actingAs($technician)->get('/export')->assertForbidden();
+});

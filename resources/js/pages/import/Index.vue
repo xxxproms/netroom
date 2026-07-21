@@ -1,13 +1,13 @@
 <script setup lang="ts">
 import { Form, Head } from '@inertiajs/vue3';
-import { FileSpreadsheet, FileUp, Info } from '@lucide/vue';
+import { Download, FileSpreadsheet, FileUp, Info } from '@lucide/vue';
 import { ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { preview } from '@/actions/App/Http/Controllers/ImportController';
 import FormField from '@/components/FormField.vue';
 import PageHeader from '@/components/PageHeader.vue';
 import { Button } from '@/components/ui/button';
-import { importMethod } from '@/routes';
+import { exportMethod, importMethod } from '@/routes';
 
 const { t } = useI18n();
 
@@ -74,5 +74,18 @@ function onPick(event: Event): void {
                 </Button>
             </div>
         </Form>
+
+        <div class="flex max-w-xl flex-col gap-2 border-t pt-6">
+            <h2 class="text-sm font-semibold">{{ t('import.exportTitle') }}</h2>
+            <p class="text-sm text-muted-foreground">{{ t('import.exportHint') }}</p>
+            <div>
+                <Button as-child variant="outline" size="sm">
+                    <a :href="exportMethod().url">
+                        <Download class="size-4" />
+                        {{ t('import.exportButton') }}
+                    </a>
+                </Button>
+            </div>
+        </div>
     </div>
 </template>
