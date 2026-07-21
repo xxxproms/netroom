@@ -26,13 +26,15 @@ use Illuminate\Support\Carbon;
  * @property string|null $mgmt_url
  * @property string $status
  * @property string|null $color
+ * @property int|null $map_x
+ * @property int|null $map_y
  * @property string|null $notes
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  */
 #[Fillable([
     'device_model_id', 'site_id', 'rack_id', 'position_u', 'face', 'name',
-    'serial', 'mgmt_ip', 'mgmt_url', 'status', 'color', 'notes',
+    'serial', 'mgmt_ip', 'mgmt_url', 'status', 'color', 'map_x', 'map_y', 'notes',
 ])]
 class Device extends Model
 {

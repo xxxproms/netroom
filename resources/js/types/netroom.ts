@@ -214,3 +214,45 @@ export type CableLink = {
 
 /** A trace alternates ends and the cables between them. */
 export type TraceStep = CableEnd | Cable;
+
+export type MapSite = {
+    id: number;
+    name: string;
+    code: string;
+    kind: string;
+    color: string | null;
+    map_x: number | null;
+    map_y: number | null;
+    rooms_count: number;
+    devices_count: number;
+};
+
+export type Tunnel = {
+    id: number;
+    site_a_id: number;
+    site_b_id: number;
+    type: string;
+    status: string;
+    label: string | null;
+    device_a: { id: number; name: string } | null;
+    device_b: { id: number; name: string } | null;
+};
+
+export type MapDevice = {
+    id: number;
+    name: string;
+    kind: string;
+    model: string;
+    color: string | null;
+    map_x: number | null;
+    map_y: number | null;
+};
+
+export type MapLink = {
+    id: number;
+    a: number;
+    b: number;
+    media: string;
+    strands: number | null;
+    label: string | null;
+};

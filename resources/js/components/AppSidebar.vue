@@ -13,6 +13,7 @@ import {
     Spline,
     Server,
     Tags,
+    Waypoints,
 } from '@lucide/vue';
 import { computed } from 'vue';
 import { useI18n } from 'vue-i18n';
@@ -29,7 +30,7 @@ import {
     SidebarMenuButton,
     SidebarMenuItem,
 } from '@/components/ui/sidebar';
-import { dashboard } from '@/routes';
+import { dashboard, map } from '@/routes';
 import { index as cables } from '@/routes/cables';
 import { index as deviceModels } from '@/routes/device-models';
 import { index as devices } from '@/routes/devices';
@@ -49,6 +50,7 @@ const mainNavItems = computed<NavItem[]>(() => [
     { title: t('nav.rooms'), href: rooms(), icon: DoorClosed },
     { title: t('nav.racks'), href: racks(), icon: Server },
     { title: t('nav.devices'), href: devices(), icon: Router },
+    { title: t('nav.map'), href: map(), icon: Waypoints },
     { title: t('nav.vlans'), href: vlans(), icon: Network },
     { title: t('nav.cables'), href: cables(), icon: Spline },
     { title: t('nav.workplaces'), href: workplaces(), icon: MapPin },

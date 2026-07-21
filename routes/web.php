@@ -4,6 +4,7 @@ use App\Http\Controllers\CableController;
 use App\Http\Controllers\CableTargetController;
 use App\Http\Controllers\DeviceController;
 use App\Http\Controllers\DeviceModelController;
+use App\Http\Controllers\NetworkMapController;
 use App\Http\Controllers\OutletController;
 use App\Http\Controllers\PortController;
 use App\Http\Controllers\RackController;
@@ -12,6 +13,7 @@ use App\Http\Controllers\RoomController;
 use App\Http\Controllers\SiteContextController;
 use App\Http\Controllers\SiteController;
 use App\Http\Controllers\TraceController;
+use App\Http\Controllers\TunnelController;
 use App\Http\Controllers\VlanController;
 use App\Http\Controllers\VlanDomainController;
 use App\Http\Controllers\VlanMatrixController;
@@ -52,6 +54,15 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     Route::get('ports/{port}/trace', [TraceController::class, 'port'])->name('ports.trace');
     Route::get('outlets/{outlet}/trace', [TraceController::class, 'outlet'])->name('outlets.trace');
+
+    Route::get('map', [NetworkMapController::class, 'index'])->name('map');
+    Route::get('map/sites/{site}', [NetworkMapController::class, 'site'])->name('map.site');
+    Route::patch('map/sites/{site}/position', [NetworkMapController::class, 'moveSite'])->name('map.sites.move');
+    Route::patch('map/devices/{device}/position', [NetworkMapController::class, 'moveDevice'])->name('map.devices.move');
+
+    Route::post('tunnels', [TunnelController::class, 'store'])->name('tunnels.store');
+    Route::patch('tunnels/{tunnel}', [TunnelController::class, 'update'])->name('tunnels.update');
+    Route::delete('tunnels/{tunnel}', [TunnelController::class, 'destroy'])->name('tunnels.destroy');
 
     Route::post('vlans/copy', [VlanController::class, 'copy'])->name('vlans.copy');
     Route::resource('vlans', VlanController::class)->except(['create', 'edit', 'show']);

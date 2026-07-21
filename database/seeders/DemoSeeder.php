@@ -11,6 +11,7 @@ use App\Models\Port;
 use App\Models\Rack;
 use App\Models\Room;
 use App\Models\Site;
+use App\Models\Tunnel;
 use App\Models\User;
 use App\Models\Vlan;
 use App\Models\VlanDomain;
@@ -59,6 +60,7 @@ class DemoSeeder extends Seeder
         $this->devices();
         $this->workplaces();
         $this->cabling();
+        $this->tunnels();
 
         Auth::logout();
     }
@@ -427,6 +429,33 @@ class DemoSeeder extends Seeder
             'length_cm' => $lengthCm,
             'status' => 'connected',
         ]);
+    }
+
+    /**
+     * How the sites reach each other. The two adjacent complexes share a Kerio
+     * Control, so each hangs off it; the far offices come in over IPsec on a
+     * MikroTik. This is exactly the connectivity a spreadsheet cannot hold.
+     */
+    private function tunnels(): void
+    {
+        $links = [
+            // A, B, type, status
+            ['NORTH', 'CITY', 'kerio_vpn', 'up'],
+            ['NORTH', 'PLANT', 'kerio_vpn', 'up'],
+            ['CITY', 'PLANT', 'ipsec', 'up'],
+            ['CITY', 'LAKE', 'ipsec', 'up'],
+            ['NORTH', 'LAKE', 'ipsec', 'planned'],
+        ];
+
+        foreach ($links as [$a, $b, $type, $status]) {
+            Tunnel::firstOrCreate(
+                [
+                    'site_a_id' => $this->sites[$a]->id,
+                    'site_b_id' => $this->sites[$b]->id,
+                ],
+                ['type' => $type, 'status' => $status],
+            );
+        }
     }
 
     /**

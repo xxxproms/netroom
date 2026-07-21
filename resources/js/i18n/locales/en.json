@@ -301,5 +301,35 @@
     "trace": {
         "title": "Cable trace",
         "nothing": "Nothing is plugged in here"
+    },
+    "map": {
+        "title": "Network map",
+        "globalHint": "Sites and the tunnels between them. Click a site for its own map.",
+        "siteHint": "Devices at the site and the cables between them. Drag to arrange.",
+        "deviceCount": "{count} devices",
+        "exportPng": "Export PNG",
+        "dragHint": "Drag the nodes to arrange the diagram",
+        "backToGlobal": "All sites",
+        "noDevices": "This site has no devices yet"
+    },
+    "tunnel": {
+        "title": "Tunnels",
+        "new": "New tunnel",
+        "hint": "A link between two sites over VPN or IPsec",
+        "siteA": "Site A",
+        "siteB": "Site B",
+        "type": "Type",
+        "label": "Label",
+        "removeConfirm": "Remove this tunnel?",
+        "typeKind": {
+            "kerio_vpn": "Kerio VPN",
+            "ipsec": "IPsec",
+            "other": "Other"
+        },
+        "statusKind": {
+            "up": "Up",
+            "down": "Down",
+            "planned": "Planned"
+        }
     }
 }

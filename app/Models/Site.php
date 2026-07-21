@@ -67,4 +67,10 @@ class Site extends Model
     {
         return $this->belongsToMany(User::class);
     }
+
+    /** @return HasMany<Device, $this> */
+    public function devices(): HasMany
+    {
+        return $this->hasMany(Device::class);
+    }
 }
