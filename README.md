@@ -29,7 +29,7 @@ Most teams document their network in Excel: one sheet per switch, VLAN membershi
 
 ## Requirements
 
-- PHP 8.3+
+- PHP 8.4+
 - Node 22+
 - PostgreSQL 16+ (SQLite works for a quick local try)
 

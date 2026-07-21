@@ -41,7 +41,7 @@ $user->assignRole('admin');
 
 ### Requirements
 
-- PHP 8.3+ with the `pdo_pgsql`, `intl`, `zip`, `bcmath` and `mbstring` extensions
+- PHP 8.4+ with the `pdo_pgsql`, `intl`, `zip`, `bcmath` and `mbstring` extensions
 - Composer 2
 - Node 22+
 - PostgreSQL 16+ (SQLite is fine for a quick local try)
