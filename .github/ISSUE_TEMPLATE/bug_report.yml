@@ -1,0 +1,57 @@
+name: Bug report
+description: Something in NetRoom does not work as expected
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: Thanks for taking the time to file a report. Please fill in what you can.
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: What happened
+      description: What did you do, and what went wrong?
+      placeholder: I opened the VLAN matrix for a switch and…
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: What you expected
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      placeholder: |
+        1. Go to…
+        2. Click…
+        3. See…
+    validations:
+      required: true
+  - type: input
+    id: version
+    attributes:
+      label: Version or commit
+      description: The release tag or commit SHA you are running.
+    validations:
+      required: false
+  - type: dropdown
+    id: install
+    attributes:
+      label: How is it running?
+      options:
+        - Docker
+        - Bare metal (PostgreSQL)
+        - Bare metal (SQLite)
+        - Local development
+    validations:
+      required: true
+  - type: textarea
+    id: logs
+    attributes:
+      label: Relevant logs
+      description: Anything from `storage/logs/laravel.log` or the browser console.
+      render: shell
+    validations:
+      required: false

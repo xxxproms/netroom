@@ -2,7 +2,7 @@
 
 Network documentation for IT departments — sites, server rooms, racks, switches, patch panels, ports, VLANs, cabling and IP addresses in one place, instead of a spreadsheet nobody trusts.
 
-> **Status:** early development. The foundation (auth, roles, localisation) is in place; the domain features listed below are landing phase by phase.
+Built with Laravel 12, Inertia and Vue 3. Ships in Russian and English.
 
 ## Why
 
@@ -19,6 +19,11 @@ Most teams document their network in Excel: one sheet per switch, VLAN membershi
 - **VPN tunnels** — how sites connect to each other, whichever firewall terminates them.
 - **IPAM** — subnets, address usage, conflicts, and management addresses linked to their devices.
 - **Network map** — an interactive diagram at two levels: all sites and the tunnels between them, then the devices inside one site.
+- **Excel import** — bring in the switch spreadsheet you already keep by hand, VLAN-colour matrix and all, with a preview that shows exactly what will be created and what the sheet gets wrong before anything is written.
+- **Export** — the documented estate back out to a workbook, scoped to what you can see.
+- **Global search** — one box (`Ctrl`/`⌘ K`) across devices, workplaces, VLANs, subnets, sites and rooms.
+- **Dashboard** — how much is documented, what needs attention (address conflicts, switches with no VLANs), and what changed lately.
+- **QR labels** — a printable sheet of stickers for hardware and desks; scan one to open its page in the panel.
 - **Roles and scopes** — permissions decide *what* a user may do, site access decides *where*.
 - **Activity log** — every change, with before/after values.
 
@@ -55,14 +60,20 @@ This builds a fictional estate — two neighbouring complexes sharing a VLAN pla
 
 ```bash
 cp .env.example .env
+docker compose run --rm app php artisan key:generate
 docker compose up -d
 ```
 
-This starts the application on <http://localhost:8080> with PostgreSQL alongside it.
+This starts the application on <http://localhost:8080> with PostgreSQL alongside it. Full steps, including creating the first administrator, are in [docs/installation.md](docs/installation.md).
 
 ## Language
 
 The interface ships in Russian and English. `APP_LOCALE` sets the default; each user can pick their own under **Settings → Appearance**.
+
+## Documentation
+
+- [Installation](docs/installation.md) — Docker and bare-metal, and creating the first administrator.
+- [Configuration](docs/configuration.md) — environment settings, roles and site access.
 
 ## Development
 
