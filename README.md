@@ -60,7 +60,8 @@ This builds a fictional estate — two neighbouring complexes sharing a VLAN pla
 
 ```bash
 cp .env.example .env
-docker compose run --rm app php artisan key:generate
+docker compose run --rm --no-deps --entrypoint "" app php artisan key:generate --show
+# put the printed base64:… value into .env as APP_KEY
 docker compose up -d
 ```
 

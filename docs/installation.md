@@ -13,13 +13,15 @@ The image builds the front end, installs dependencies and serves the app on port
 git clone https://github.com/xxxproms/netroom.git
 cd netroom
 cp .env.example .env
-docker compose run --rm app php artisan key:generate
+docker compose run --rm --no-deps --entrypoint "" app php artisan key:generate --show
+# put the printed base64:… value into .env as APP_KEY
 docker compose up -d
 ```
 
 The application is at <http://localhost:8080>. Migrations run automatically on
-start (see `docker/entrypoint.sh`). Database data lives in the `netroom-db`
-volume and survives `docker compose down`; add `-v` to discard it.
+start (see `docker/entrypoint.sh`). Database data lives in the `database`
+volume and survives `docker compose down`; add `-v` to discard it. The compose
+file reads `APP_KEY`, `APP_PORT`, `DB_*` and other settings from `.env`.
 
 Create the first administrator once the containers are up:
 
