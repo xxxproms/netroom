@@ -408,5 +408,49 @@
         "wMissingSheet": "\"{switch}\": sheet \"{sheet}\" not found",
         "wNoSheet": "\"{switch}\": no port matrix sheet",
         "wPortMismatch": "\"{switch}\": more ports in the sheet ({sheet_ports}) than the model has ({model_ports})"
+    },
+    "dashboard": {
+        "title": "Dashboard",
+        "hint": "An overview of the documented network for the chosen site",
+        "attention": "Needs attention",
+        "allClear": "All clear — nothing to flag",
+        "recent": "Recent changes",
+        "noActivity": "No changes yet",
+        "stat": {
+            "sites": "Sites",
+            "devices": "Devices",
+            "rooms": "Rooms",
+            "racks": "Racks",
+            "cables": "Cables",
+            "workplaces": "Workplaces",
+            "vlans": "VLANs",
+            "subnets": "Subnets"
+        },
+        "warn": {
+            "ipamConflicts": "IP address conflicts",
+            "switchesWithoutVlans": "Switches without VLANs"
+        },
+        "event": {
+            "created": "created",
+            "updated": "updated",
+            "deleted": "deleted"
+        },
+        "model": {
+            "Site": "Site",
+            "Room": "Room",
+            "Rack": "Rack",
+            "Device": "Device",
+            "DeviceModel": "Model",
+            "Port": "Port",
+            "PortTemplate": "Port template",
+            "Vlan": "VLAN",
+            "VlanDomain": "VLAN domain",
+            "Cable": "Cable",
+            "Outlet": "Outlet",
+            "Workplace": "Workplace",
+            "Subnet": "Subnet",
+            "IpAddress": "IP address",
+            "Tunnel": "Tunnel"
+        }
     }
 }

@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\CableController;
 use App\Http\Controllers\CableTargetController;
+use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\DeviceController;
 use App\Http\Controllers\DeviceModelController;
 use App\Http\Controllers\ImportController;
@@ -26,7 +27,7 @@ use Illuminate\Support\Facades\Route;
 Route::inertia('/', 'Welcome')->name('home');
 
 Route::middleware(['auth', 'verified'])->group(function () {
-    Route::inertia('dashboard', 'Dashboard')->name('dashboard');
+    Route::get('dashboard', DashboardController::class)->name('dashboard');
 
     // The site picker in the header.
     Route::put('context/site', [SiteContextController::class, 'update'])->name('context.site');

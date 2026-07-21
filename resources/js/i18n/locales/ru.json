@@ -408,5 +408,49 @@
         "wMissingSheet": "«{switch}»: лист «{sheet}» не найден",
         "wNoSheet": "«{switch}»: нет листа с матрицей портов",
         "wPortMismatch": "«{switch}»: портов в листе ({sheet_ports}) больше, чем у модели ({model_ports})"
+    },
+    "dashboard": {
+        "title": "Дашборд",
+        "hint": "Обзор задокументированной сети по выбранному филиалу",
+        "attention": "Требует внимания",
+        "allClear": "Всё в порядке — замечаний нет",
+        "recent": "Последние изменения",
+        "noActivity": "Изменений пока нет",
+        "stat": {
+            "sites": "Филиалы",
+            "devices": "Устройства",
+            "rooms": "Помещения",
+            "racks": "Шкафы",
+            "cables": "Кабели",
+            "workplaces": "Рабочие места",
+            "vlans": "VLAN",
+            "subnets": "Подсети"
+        },
+        "warn": {
+            "ipamConflicts": "Конфликты IP-адресов",
+            "switchesWithoutVlans": "Коммутаторы без VLAN"
+        },
+        "event": {
+            "created": "создано",
+            "updated": "изменено",
+            "deleted": "удалено"
+        },
+        "model": {
+            "Site": "Филиал",
+            "Room": "Помещение",
+            "Rack": "Шкаф",
+            "Device": "Устройство",
+            "DeviceModel": "Модель",
+            "Port": "Порт",
+            "PortTemplate": "Шаблон портов",
+            "Vlan": "VLAN",
+            "VlanDomain": "VLAN-домен",
+            "Cable": "Кабель",
+            "Outlet": "Розетка",
+            "Workplace": "Рабочее место",
+            "Subnet": "Подсеть",
+            "IpAddress": "IP-адрес",
+            "Tunnel": "VPN-туннель"
+        }
     }
 }
