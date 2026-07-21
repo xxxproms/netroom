@@ -4,6 +4,7 @@ use App\Http\Controllers\CableController;
 use App\Http\Controllers\CableTargetController;
 use App\Http\Controllers\DeviceController;
 use App\Http\Controllers\DeviceModelController;
+use App\Http\Controllers\ImportController;
 use App\Http\Controllers\IpAddressController;
 use App\Http\Controllers\NetworkMapController;
 use App\Http\Controllers\OutletController;
@@ -70,6 +71,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('subnets/{subnet}/addresses', [IpAddressController::class, 'store'])->name('ip-addresses.store');
     Route::patch('ip-addresses/{ipAddress}', [IpAddressController::class, 'update'])->name('ip-addresses.update');
     Route::delete('ip-addresses/{ipAddress}', [IpAddressController::class, 'destroy'])->name('ip-addresses.destroy');
+
+    Route::get('import', [ImportController::class, 'create'])->name('import');
+    Route::post('import/preview', [ImportController::class, 'preview'])->name('import.preview');
+    Route::post('import/commit', [ImportController::class, 'commit'])->name('import.commit');
 
     Route::post('vlans/copy', [VlanController::class, 'copy'])->name('vlans.copy');
     Route::resource('vlans', VlanController::class)->except(['create', 'edit', 'show']);

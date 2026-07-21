@@ -1,7 +1,6 @@
 <?php
 
 use App\Models\Device;
-use App\Models\IpAddress;
 use App\Models\Site;
 use App\Models\Subnet;
 use App\Models\User;

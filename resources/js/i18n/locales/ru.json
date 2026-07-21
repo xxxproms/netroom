@@ -23,7 +23,8 @@
         "audit": "Журнал изменений",
         "settings": "Настройки",
         "repository": "Репозиторий",
-        "documentation": "Документация"
+        "documentation": "Документация",
+        "import": "Импорт"
     },
     "common": {
         "create": "Создать",
@@ -370,5 +371,42 @@
             "gateway": "Шлюз",
             "excluded": "Исключён"
         }
+    },
+    "import": {
+        "title": "Импорт из Excel",
+        "listHint": "Загрузка таблицы коммутаторов, которую отдел ведёт вручную",
+        "upload": "Файл .xlsx",
+        "uploadHint": "Лист «SW» со списком коммутаторов и по листу на каждый — с матрицей VLAN × порт",
+        "pick": "Выбрать файл",
+        "analyze": "Проанализировать",
+        "analyzing": "Анализ…",
+        "back": "Назад",
+        "confirm": "Импортировать",
+        "importing": "Импорт…",
+        "preview": "Предпросмотр импорта",
+        "previewHint": "Проверьте, что будет создано, затем подтвердите",
+        "file": "Файл",
+        "domain": "VLAN-домен",
+        "summary": "Будет создано",
+        "countSwitches": "Коммутаторы",
+        "countVlans": "VLAN",
+        "countMemberships": "Привязки VLAN к портам",
+        "countWarnings": "Предупреждения",
+        "colName": "Коммутатор",
+        "colSite": "Филиал",
+        "colModel": "Модель",
+        "colMgmt": "IP управления",
+        "colPorts": "Порты",
+        "colUplinks": "Аплинки",
+        "colMemberships": "Привязки",
+        "noSite": "Без филиала",
+        "noSiteHint": "У листа нет признака филиала (MS1xx — Астория, MS2xx — Бомбей) — коммутатор будет пропущен",
+        "skipHint": "Коммутаторы без филиала и уже импортированные будут пропущены",
+        "warningsTitle": "Предупреждения листа",
+        "empty": "В таблице нет коммутаторов для импорта",
+        "wGarbled": "«{switch}»: имя в сломанной кодировке",
+        "wMissingSheet": "«{switch}»: лист «{sheet}» не найден",
+        "wNoSheet": "«{switch}»: нет листа с матрицей портов",
+        "wPortMismatch": "«{switch}»: портов в листе ({sheet_ports}) больше, чем у модели ({model_ports})"
     }
 }

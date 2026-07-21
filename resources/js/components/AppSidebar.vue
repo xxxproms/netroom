@@ -5,6 +5,7 @@ import {
     Building2,
     Cable,
     DoorClosed,
+    FileUp,
     FolderGit2,
     LayoutGrid,
     MapPin,
@@ -31,19 +32,22 @@ import {
     SidebarMenuButton,
     SidebarMenuItem,
 } from '@/components/ui/sidebar';
-import { dashboard, map } from '@/routes';
+import { usePermissions, Permission } from '@/composables/usePermissions';
+import { dashboard, importMethod, map } from '@/routes';
 import { index as cables } from '@/routes/cables';
 import { index as deviceModels } from '@/routes/device-models';
 import { index as devices } from '@/routes/devices';
 import { index as racks } from '@/routes/racks';
 import { index as rooms } from '@/routes/rooms';
 import { index as sites } from '@/routes/sites';
+import { index as subnets } from '@/routes/subnets';
 import { index as vlanDomains } from '@/routes/vlan-domains';
 import { index as vlans } from '@/routes/vlans';
 import { index as workplaces } from '@/routes/workplaces';
 import type { NavItem } from '@/types';
 
 const { t } = useI18n();
+const { can } = usePermissions();
 
 const mainNavItems = computed<NavItem[]>(() => [
     { title: t('nav.dashboard'), href: dashboard(), icon: LayoutGrid },
@@ -58,6 +62,9 @@ const mainNavItems = computed<NavItem[]>(() => [
     { title: t('nav.ipam'), href: subnets(), icon: EthernetPort },
     { title: t('nav.vlanDomains'), href: vlanDomains(), icon: Cable },
     { title: t('nav.models'), href: deviceModels(), icon: Tags },
+    ...(can(Permission.importExport)
+        ? [{ title: t('nav.import'), href: importMethod(), icon: FileUp }]
+        : []),
 ]);
 
 const footerNavItems = computed<NavItem[]>(() => [

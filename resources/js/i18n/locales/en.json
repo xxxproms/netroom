@@ -23,7 +23,8 @@
         "audit": "Activity log",
         "settings": "Settings",
         "repository": "Repository",
-        "documentation": "Documentation"
+        "documentation": "Documentation",
+        "import": "Import"
     },
     "common": {
         "create": "Create",
@@ -370,5 +371,42 @@
             "gateway": "Gateway",
             "excluded": "Excluded"
         }
+    },
+    "import": {
+        "title": "Import from Excel",
+        "listHint": "Bring in the switch spreadsheet the department keeps by hand",
+        "upload": ".xlsx file",
+        "uploadHint": "A \"SW\" sheet listing the switches, and one sheet per switch holding a VLAN × port matrix",
+        "pick": "Choose file",
+        "analyze": "Analyse",
+        "analyzing": "Analysing…",
+        "back": "Back",
+        "confirm": "Import",
+        "importing": "Importing…",
+        "preview": "Import preview",
+        "previewHint": "Check what will be created, then confirm",
+        "file": "File",
+        "domain": "VLAN domain",
+        "summary": "Will be created",
+        "countSwitches": "Switches",
+        "countVlans": "VLANs",
+        "countMemberships": "Port VLAN assignments",
+        "countWarnings": "Warnings",
+        "colName": "Switch",
+        "colSite": "Site",
+        "colModel": "Model",
+        "colMgmt": "Management IP",
+        "colPorts": "Ports",
+        "colUplinks": "Uplinks",
+        "colMemberships": "Assignments",
+        "noSite": "No site",
+        "noSiteHint": "The sheet carries no site marker (MS1xx is Astoria, MS2xx is Bombay) — this switch is skipped",
+        "skipHint": "Switches with no site and ones already imported are skipped",
+        "warningsTitle": "Sheet warnings",
+        "empty": "The spreadsheet has no switches to import",
+        "wGarbled": "\"{switch}\": name in a broken encoding",
+        "wMissingSheet": "\"{switch}\": sheet \"{sheet}\" not found",
+        "wNoSheet": "\"{switch}\": no port matrix sheet",
+        "wPortMismatch": "\"{switch}\": more ports in the sheet ({sheet_ports}) than the model has ({model_ports})"
     }
 }
