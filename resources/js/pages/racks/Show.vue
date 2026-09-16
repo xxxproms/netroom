@@ -1,10 +1,12 @@
 <script setup lang="ts">
 import { Head, Link, router } from '@inertiajs/vue3';
-import { Plus } from '@lucide/vue';
+import { Cable, LayoutList, Plus, Server } from '@lucide/vue';
 import { ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 import DeviceFormDialog from '@/components/devices/DeviceFormDialog.vue';
+import ServerFormDialog from '@/components/devices/ServerFormDialog.vue';
 import PageHeader from '@/components/PageHeader.vue';
+import PatchBay from '@/components/patch/PatchBay.vue';
 import RackElevation from '@/components/racks/RackElevation.vue';
 import RackScaleToggle from '@/components/racks/RackScaleToggle.vue';
 import { Badge } from '@/components/ui/badge';
@@ -23,6 +25,7 @@ const props = defineProps<{
     models: DeviceModelSummary[];
     statuses: string[];
     faces: string[];
+    portMedia: string[];
     can: { update: boolean; createDevice: boolean };
 }>();
 
@@ -35,6 +38,9 @@ defineOptions({
 const adding = ref(false);
 const addingAt = ref<number | undefined>();
 const addingFace = ref('front');
+
+const addingServer = ref(false);
+const mode = ref<'elevation' | 'patch'>('elevation');
 
 function open(device: RackDevice): void {
     router.get(showDevice(device.id).url);
@@ -68,25 +74,58 @@ function addAt(position: number, face: string): void {
             :description="`${t(`rack.kind.${rack.kind}`)} · ${rack.u_height}U`"
         >
             <template #actions>
-                <RackScaleToggle />
-                <Link :href="showRoom(rack.room.id)">
-                    <Badge variant="outline">{{ rack.room.name }}</Badge>
-                </Link>
-                <Badge variant="outline" class="font-mono">
-                    {{ rack.site.code }}
-                </Badge>
                 <Button
-                    v-if="can.createDevice"
                     size="sm"
-                    @click="addAt(1, 'front')"
+                    :variant="mode === 'patch' ? 'default' : 'outline'"
+                    @click="mode = mode === 'patch' ? 'elevation' : 'patch'"
                 >
-                    <Plus class="size-4" />
-                    {{ t('device.new') }}
+                    <component
+                        :is="mode === 'patch' ? LayoutList : Cable"
+                        class="size-4"
+                    />
+                    {{
+                        mode === 'patch'
+                            ? t('patch.elevation')
+                            : t('patch.mode')
+                    }}
                 </Button>
+
+                <template v-if="mode === 'elevation'">
+                    <RackScaleToggle />
+                    <Link :href="showRoom(rack.room.id)">
+                        <Badge variant="outline">{{ rack.room.name }}</Badge>
+                    </Link>
+                    <Badge variant="outline" class="font-mono">
+                        {{ rack.site.code }}
+                    </Badge>
+                    <Button
+                        v-if="can.createDevice"
+                        size="sm"
+                        variant="outline"
+                        @click="addingServer = true"
+                    >
+                        <Server class="size-4" />
+                        {{ t('server.new') }}
+                    </Button>
+                    <Button
+                        v-if="can.createDevice"
+                        size="sm"
+                        @click="addAt(1, 'front')"
+                    >
+                        <Plus class="size-4" />
+                        {{ t('device.new') }}
+                    </Button>
+                </template>
             </template>
         </PageHeader>
 
-        <div class="flex flex-wrap gap-6">
+        <PatchBay
+            v-if="mode === 'patch'"
+            :rack-id="rack.id"
+            :rack-name="rack.name"
+        />
+
+        <div v-else class="flex flex-wrap gap-6">
             <RackElevation
                 v-for="face in faces"
                 :key="face"
@@ -147,5 +186,15 @@ function addAt(position: number, face: string): void {
         :rack-id="rack.id"
         :position-u="addingAt"
         :face="addingFace"
+    />
+
+    <ServerFormDialog
+        v-model:open="addingServer"
+        :site-id="rack.site.id"
+        :rack-id="rack.id"
+        :statuses="statuses"
+        :faces="faces"
+        :port-media="portMedia"
+        :position-u="1"
     />
 </template>

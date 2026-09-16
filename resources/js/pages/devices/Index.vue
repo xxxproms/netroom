@@ -1,16 +1,24 @@
 <script setup lang="ts">
 import { Head, Link } from '@inertiajs/vue3';
-import { ref } from 'vue';
+import { computed, ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 import EmptyState from '@/components/EmptyState.vue';
 import PageHeader from '@/components/PageHeader.vue';
-import { Badge } from '@/components/ui/badge';
+import StatusChip from '@/components/StatusChip.vue';
+import {
+    Table,
+    TableBody,
+    TableCell,
+    TableHead,
+    TableHeader,
+    TableRow,
+} from '@/components/ui/table';
 import { index as devicesIndex, show } from '@/routes/devices';
 import type { Device } from '@/types';
 
 const { t } = useI18n();
 
-defineProps<{
+const props = defineProps<{
     devices: Device[];
     statuses: string[];
     can: { create: boolean };
@@ -23,6 +31,28 @@ defineOptions({
 });
 
 const search = ref('');
+
+const filtered = computed(() => {
+    const needle = search.value.trim().toLowerCase();
+
+    if (!needle) {
+        return props.devices;
+    }
+
+    return props.devices.filter(
+        (device) =>
+            device.name.toLowerCase().includes(needle) ||
+            (device.mgmt_ip ?? '').includes(needle),
+    );
+});
+
+/** Live is green, a spare blue, a failed unit red, a retired one grey. */
+const statusTone: Record<string, 'green' | 'blue' | 'red' | 'gray'> = {
+    active: 'green',
+    spare: 'blue',
+    failed: 'red',
+    decommissioned: 'gray',
+};
 </script>
 
 <template>
@@ -46,81 +76,54 @@ const search = ref('');
             </p>
         </EmptyState>
 
-        <div v-else class="overflow-x-auto rounded-xl border">
-            <table class="w-full text-[15px]">
-                <thead class="bg-muted/50 text-sm text-muted-foreground">
-                    <tr>
-                        <th class="px-4 py-3 text-left font-medium">
-                            {{ t('common.name') }}
-                        </th>
-                        <th class="px-4 py-3 text-left font-medium">
-                            {{ t('device.model') }}
-                        </th>
-                        <th class="px-4 py-3 text-left font-medium">
-                            {{ t('device.mgmtIp') }}
-                        </th>
-                        <th class="px-4 py-3 text-left font-medium">
-                            {{ t('device.location') }}
-                        </th>
-                        <th class="px-4 py-3 text-right font-medium">
-                            {{ t('model.ports') }}
-                        </th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr
-                        v-for="device in devices.filter(
-                            (item) =>
-                                !search ||
-                                item.name
-                                    .toLowerCase()
-                                    .includes(search.toLowerCase()) ||
-                                (item.mgmt_ip ?? '').includes(search),
-                        )"
-                        :key="device.id"
-                        class="border-t hover:bg-accent/40"
-                    >
-                        <td class="px-4 py-3">
-                            <Link
-                                :href="show(device.id)"
-                                class="font-medium hover:underline"
-                            >
-                                {{ device.name }}
-                            </Link>
-                            <Badge
-                                v-if="device.status !== 'active'"
-                                variant="outline"
-                                class="ml-2 text-xs"
-                            >
-                                {{ t(`device.statusKind.${device.status}`) }}
-                            </Badge>
-                        </td>
-                        <td class="px-4 py-3 text-muted-foreground">
-                            {{ device.model.vendor }} {{ device.model.model }}
-                        </td>
-                        <td class="px-4 py-3 font-mono">
-                            {{ device.mgmt_ip ?? '—' }}
-                        </td>
-                        <td class="px-4 py-3 text-muted-foreground">
-                            <span class="font-mono">{{
-                                device.site.code
-                            }}</span>
-                            <template v-if="device.rack">
-                                · {{ device.rack.name }}
-                                <span
-                                    v-if="device.position_u"
-                                    class="font-mono"
-                                >
-                                    · {{ device.position_u }}U
-                                </span>
-                            </template>
-                        </td>
-                        <td class="px-4 py-3 text-right tabular-nums">
-                            {{ device.ports_count }}
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
+        <Table v-else>
+            <TableHeader>
+                <TableRow>
+                    <TableHead>{{ t('common.name') }}</TableHead>
+                    <TableHead>{{ t('device.model') }}</TableHead>
+                    <TableHead class="w-32">{{ t('common.status') }}</TableHead>
+                    <TableHead>{{ t('device.mgmtIp') }}</TableHead>
+                    <TableHead>{{ t('device.location') }}</TableHead>
+                    <TableHead class="text-right">
+                        {{ t('model.ports') }}
+                    </TableHead>
+                </TableRow>
+            </TableHeader>
+            <TableBody>
+                <TableRow v-for="device in filtered" :key="device.id">
+                    <TableCell>
+                        <Link
+                            :href="show(device.id)"
+                            class="font-medium hover:underline"
+                        >
+                            {{ device.name }}
+                        </Link>
+                    </TableCell>
+                    <TableCell class="text-muted-foreground">
+                        {{ device.model.vendor }} {{ device.model.model }}
+                    </TableCell>
+                    <TableCell>
+                        <StatusChip :tone="statusTone[device.status]">
+                            {{ t(`device.statusKind.${device.status}`) }}
+                        </StatusChip>
+                    </TableCell>
+                    <TableCell class="font-mono">
+                        {{ device.mgmt_ip ?? '—' }}
+                    </TableCell>
+                    <TableCell class="text-muted-foreground">
+                        <span class="font-mono">{{ device.site.code }}</span>
+                        <template v-if="device.rack">
+                            · {{ device.rack.name }}
+                            <span v-if="device.position_u" class="font-mono">
+                                · {{ device.position_u }}U
+                            </span>
+                        </template>
+                    </TableCell>
+                    <TableCell class="text-right tabular-nums">
+                        {{ device.ports_count }}
+                    </TableCell>
+                </TableRow>
+            </TableBody>
+        </Table>
     </div>
 </template>

@@ -6,6 +6,14 @@ import { useI18n } from 'vue-i18n';
 import EmptyState from '@/components/EmptyState.vue';
 import PageHeader from '@/components/PageHeader.vue';
 import { Button } from '@/components/ui/button';
+import {
+    Table,
+    TableBody,
+    TableCell,
+    TableHead,
+    TableHeader,
+    TableRow,
+} from '@/components/ui/table';
 import VlanCopyDialog from '@/components/vlans/VlanCopyDialog.vue';
 import VlanFormDialog from '@/components/vlans/VlanFormDialog.vue';
 import { destroy, index as vlansIndex } from '@/routes/vlans';
@@ -89,69 +97,58 @@ function remove(vlan: Vlan): void {
 
         <EmptyState v-else-if="!vlans.length" :message="t('vlan.empty')" />
 
-        <div v-else class="overflow-x-auto rounded-xl border">
-            <table class="w-full text-[15px]">
-                <thead class="bg-muted/50 text-sm text-muted-foreground">
-                    <tr>
-                        <th class="w-24 px-4 py-3 text-left font-medium">
-                            {{ t('vlan.vid') }}
-                        </th>
-                        <th class="px-4 py-3 text-left font-medium">
-                            {{ t('common.name') }}
-                        </th>
-                        <th class="px-4 py-3 text-left font-medium">
-                            {{ t('common.description') }}
-                        </th>
-                        <th
-                            v-if="can.manage"
-                            class="px-4 py-3 text-right font-medium"
-                        >
-                            {{ t('common.actions') }}
-                        </th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr v-for="vlan in vlans" :key="vlan.id" class="border-t">
-                        <td class="px-4 py-3">
-                            <span class="flex items-center gap-2">
-                                <span
-                                    class="size-2.5 rounded-full"
-                                    :style="{
-                                        backgroundColor:
-                                            vlan.color ?? 'var(--muted)',
-                                    }"
-                                />
-                                <span class="font-mono tabular-nums">
-                                    {{ vlan.vid }}
-                                </span>
+        <Table v-else>
+            <TableHeader>
+                <TableRow>
+                    <TableHead class="w-24">{{ t('vlan.vid') }}</TableHead>
+                    <TableHead>{{ t('common.name') }}</TableHead>
+                    <TableHead>{{ t('common.description') }}</TableHead>
+                    <TableHead v-if="can.manage" class="text-right">
+                        {{ t('common.actions') }}
+                    </TableHead>
+                </TableRow>
+            </TableHeader>
+            <TableBody>
+                <TableRow v-for="vlan in vlans" :key="vlan.id">
+                    <TableCell>
+                        <span class="flex items-center gap-2">
+                            <span
+                                class="size-2.5 rounded-full"
+                                :style="{
+                                    backgroundColor:
+                                        vlan.color ?? 'var(--muted)',
+                                }"
+                            />
+                            <span class="font-mono tabular-nums">
+                                {{ vlan.vid }}
                             </span>
-                        </td>
-                        <td class="px-4 py-3 font-medium">{{ vlan.name }}</td>
-                        <td class="px-4 py-3 text-muted-foreground">
-                            {{ vlan.description }}
-                        </td>
-                        <td v-if="can.manage" class="px-2 py-2 text-right">
-                            <Button
-                                size="icon"
-                                variant="ghost"
-                                class="size-8"
-                                @click="editing = vlan"
-                            >
-                                <Pencil class="size-4" />
-                            </Button>
-                            <Button
-                                size="icon"
-                                variant="ghost"
-                                class="size-8 text-destructive"
-                                @click="remove(vlan)"
-                            >
-                                <Trash2 class="size-4" />
-                            </Button>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
+                        </span>
+                    </TableCell>
+                    <TableCell class="font-medium">{{ vlan.name }}</TableCell>
+                    <TableCell class="text-muted-foreground">
+                        {{ vlan.description }}
+                    </TableCell>
+                    <TableCell v-if="can.manage" class="text-right">
+                        <Button
+                            size="icon"
+                            variant="ghost"
+                            class="size-8"
+                            @click="editing = vlan"
+                        >
+                            <Pencil class="size-4" />
+                        </Button>
+                        <Button
+                            size="icon"
+                            variant="ghost"
+                            class="size-8 text-destructive"
+                            @click="remove(vlan)"
+                        >
+                            <Trash2 class="size-4" />
+                        </Button>
+                    </TableCell>
+                </TableRow>
+            </TableBody>
+        </Table>
     </div>
 
     <VlanFormDialog

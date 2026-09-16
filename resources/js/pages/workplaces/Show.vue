@@ -17,6 +17,14 @@ import PageHeader from '@/components/PageHeader.vue';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import {
+    Table,
+    TableBody,
+    TableCell,
+    TableHead,
+    TableHeader,
+    TableRow,
+} from '@/components/ui/table';
 import WorkplaceFormDialog from '@/components/workplaces/WorkplaceFormDialog.vue';
 import { destroy as removeCable } from '@/routes/cables';
 import {
@@ -193,106 +201,96 @@ function disconnect(outlet: Outlet): void {
                 </p>
             </Form>
 
-            <div class="overflow-x-auto rounded-xl border">
-                <table class="w-full text-[15px]">
-                    <thead class="bg-muted/50 text-sm text-muted-foreground">
-                        <tr>
-                            <th class="w-32 px-4 py-3 text-left font-medium">
-                                {{ t('outlet.label') }}
-                            </th>
-                            <th class="w-28 px-4 py-3 text-left font-medium">
-                                {{ t('model.media') }}
-                            </th>
-                            <th class="px-4 py-3 text-left font-medium">
-                                {{ t('cable.connectedTo') }}
-                            </th>
-                            <th class="w-36 px-4 py-3 text-right font-medium">
-                                {{ t('common.actions') }}
-                            </th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr
-                            v-for="outlet in workplace.outlets ?? []"
-                            :key="outlet.id"
-                            class="border-t"
+            <Table>
+                <TableHeader>
+                    <TableRow>
+                        <TableHead class="w-32">{{
+                            t('outlet.label')
+                        }}</TableHead>
+                        <TableHead class="w-28">{{
+                            t('model.media')
+                        }}</TableHead>
+                        <TableHead>{{ t('cable.connectedTo') }}</TableHead>
+                        <TableHead class="w-36 text-right">
+                            {{ t('common.actions') }}
+                        </TableHead>
+                    </TableRow>
+                </TableHeader>
+                <TableBody>
+                    <TableRow
+                        v-for="outlet in workplace.outlets ?? []"
+                        :key="outlet.id"
+                    >
+                        <TableCell class="font-mono">
+                            {{ outlet.label }}
+                        </TableCell>
+                        <TableCell>
+                            <Badge variant="outline" class="text-xs">
+                                {{ t(`model.mediaKind.${outlet.media}`) }}
+                            </Badge>
+                        </TableCell>
+                        <TableCell>
+                            <EndLabel
+                                v-if="outlet.link?.far"
+                                :end="outlet.link.far"
+                            />
+                            <span v-else class="text-sm text-muted-foreground">
+                                {{ t('cable.notConnected') }}
+                            </span>
+                        </TableCell>
+                        <TableCell class="py-1.5 text-right whitespace-nowrap">
+                            <Button
+                                v-if="outlet.link"
+                                size="icon"
+                                variant="ghost"
+                                class="size-8"
+                                :title="t('trace.title')"
+                                @click="tracing = outlet"
+                            >
+                                <RouteIcon class="size-4" />
+                            </Button>
+                            <Button
+                                v-if="can.update && !outlet.link"
+                                size="icon"
+                                variant="ghost"
+                                class="size-8"
+                                :title="t('cable.connect')"
+                                @click="connecting = outlet"
+                            >
+                                <Plug class="size-4" />
+                            </Button>
+                            <Button
+                                v-if="can.update && outlet.link"
+                                size="icon"
+                                variant="ghost"
+                                class="size-8"
+                                :title="t('cable.disconnect')"
+                                @click="disconnect(outlet)"
+                            >
+                                <Unplug class="size-4" />
+                            </Button>
+                            <Button
+                                v-if="can.update"
+                                size="icon"
+                                variant="ghost"
+                                class="size-8 text-destructive"
+                                :title="t('common.delete')"
+                                @click="removeSocket(outlet)"
+                            >
+                                <Trash2 class="size-4" />
+                            </Button>
+                        </TableCell>
+                    </TableRow>
+                    <TableRow v-if="!workplace.outlets?.length">
+                        <TableCell
+                            colspan="4"
+                            class="py-6 text-center text-sm text-muted-foreground"
                         >
-                            <td class="px-4 py-2.5 font-mono">
-                                {{ outlet.label }}
-                            </td>
-                            <td class="px-4 py-2">
-                                <Badge variant="outline" class="text-xs">
-                                    {{ t(`model.mediaKind.${outlet.media}`) }}
-                                </Badge>
-                            </td>
-                            <td class="px-4 py-2">
-                                <EndLabel
-                                    v-if="outlet.link?.far"
-                                    :end="outlet.link.far"
-                                />
-                                <span
-                                    v-else
-                                    class="text-sm text-muted-foreground"
-                                >
-                                    {{ t('cable.notConnected') }}
-                                </span>
-                            </td>
-                            <td
-                                class="px-2 py-1.5 text-right whitespace-nowrap"
-                            >
-                                <Button
-                                    v-if="outlet.link"
-                                    size="icon"
-                                    variant="ghost"
-                                    class="size-8"
-                                    :title="t('trace.title')"
-                                    @click="tracing = outlet"
-                                >
-                                    <RouteIcon class="size-4" />
-                                </Button>
-                                <Button
-                                    v-if="can.update && !outlet.link"
-                                    size="icon"
-                                    variant="ghost"
-                                    class="size-8"
-                                    :title="t('cable.connect')"
-                                    @click="connecting = outlet"
-                                >
-                                    <Plug class="size-4" />
-                                </Button>
-                                <Button
-                                    v-if="can.update && outlet.link"
-                                    size="icon"
-                                    variant="ghost"
-                                    class="size-8"
-                                    :title="t('cable.disconnect')"
-                                    @click="disconnect(outlet)"
-                                >
-                                    <Unplug class="size-4" />
-                                </Button>
-                                <Button
-                                    v-if="can.update"
-                                    size="icon"
-                                    variant="ghost"
-                                    class="size-8 text-destructive"
-                                    :title="t('common.delete')"
-                                    @click="removeSocket(outlet)"
-                                >
-                                    <Trash2 class="size-4" />
-                                </Button>
-                            </td>
-                        </tr>
-                        <tr v-if="!workplace.outlets?.length">
-                            <td
-                                colspan="4"
-                                class="px-4 py-6 text-center text-sm text-muted-foreground"
-                            >
-                                {{ t('outlet.empty') }}
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
+                            {{ t('outlet.empty') }}
+                        </TableCell>
+                    </TableRow>
+                </TableBody>
+            </Table>
         </section>
     </div>
 

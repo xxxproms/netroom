@@ -6,11 +6,27 @@ import { useI18n } from 'vue-i18n';
 import EndLabel from '@/components/cables/EndLabel.vue';
 import EmptyState from '@/components/EmptyState.vue';
 import PageHeader from '@/components/PageHeader.vue';
+import StatusChip from '@/components/StatusChip.vue';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import {
+    Table,
+    TableBody,
+    TableCell,
+    TableHead,
+    TableHeader,
+    TableRow,
+} from '@/components/ui/table';
 import { destroy, index as cablesIndex } from '@/routes/cables';
 import type { CableRow } from '@/types';
+
+/** Green when live, amber while only planned, grey once retired. */
+const cableTone: Record<string, 'green' | 'amber' | 'gray'> = {
+    connected: 'green',
+    planned: 'amber',
+    decommissioned: 'gray',
+};
 
 const { t } = useI18n();
 
@@ -80,83 +96,69 @@ function remove(cable: CableRow): void {
             :message="t('common.nothingFound')"
         />
 
-        <div v-else class="overflow-x-auto rounded-xl border">
-            <table class="w-full text-[15px]">
-                <thead class="bg-muted/50 text-sm text-muted-foreground">
-                    <tr>
-                        <th class="w-28 px-4 py-3 text-left font-medium">
-                            {{ t('cable.label') }}
-                        </th>
-                        <th class="px-4 py-3 text-left font-medium">
-                            {{ t('cable.endA') }}
-                        </th>
-                        <th class="px-4 py-3 text-left font-medium">
-                            {{ t('cable.endB') }}
-                        </th>
-                        <th class="w-32 px-4 py-3 text-left font-medium">
-                            {{ t('cable.media') }}
-                        </th>
-                        <th class="w-24 px-4 py-3 text-right font-medium">
-                            {{ t('cable.lengthCm') }}
-                        </th>
-                        <th
-                            v-if="can.update"
-                            class="w-16 px-4 py-3 text-right font-medium"
-                        >
-                            {{ t('common.actions') }}
-                        </th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr
-                        v-for="cable in found"
-                        :key="cable.id"
-                        class="border-t"
-                        :class="{
-                            'opacity-60': cable.status !== 'connected',
-                        }"
+        <Table v-else>
+            <TableHeader>
+                <TableRow>
+                    <TableHead class="w-28">{{ t('cable.label') }}</TableHead>
+                    <TableHead>{{ t('cable.endA') }}</TableHead>
+                    <TableHead>{{ t('cable.endB') }}</TableHead>
+                    <TableHead class="w-32">{{ t('cable.media') }}</TableHead>
+                    <TableHead class="w-28">{{ t('common.status') }}</TableHead>
+                    <TableHead class="w-24 text-right">
+                        {{ t('cable.lengthCm') }}
+                    </TableHead>
+                    <TableHead v-if="can.update" class="w-16 text-right">
+                        {{ t('common.actions') }}
+                    </TableHead>
+                </TableRow>
+            </TableHeader>
+            <TableBody>
+                <TableRow
+                    v-for="cable in found"
+                    :key="cable.id"
+                    :class="{ 'opacity-60': cable.status !== 'connected' }"
+                >
+                    <TableCell class="font-mono">
+                        {{ cable.label ?? '—' }}
+                    </TableCell>
+                    <TableCell><EndLabel :end="cable.a" /></TableCell>
+                    <TableCell><EndLabel :end="cable.b" /></TableCell>
+                    <TableCell>
+                        <Badge variant="outline" class="text-xs">
+                            {{ t(`cable.mediaKind.${cable.media}`) }}
+                            <template v-if="cable.strands">
+                                ·
+                                {{
+                                    t('cable.strandCount', {
+                                        count: cable.strands,
+                                    })
+                                }}
+                            </template>
+                        </Badge>
+                    </TableCell>
+                    <TableCell>
+                        <StatusChip :tone="cableTone[cable.status]">
+                            {{ t(`cable.statusKind.${cable.status}`) }}
+                        </StatusChip>
+                    </TableCell>
+                    <TableCell
+                        class="text-right text-muted-foreground tabular-nums"
                     >
-                        <td class="px-4 py-2.5 font-mono">
-                            {{ cable.label ?? '—' }}
-                        </td>
-                        <td class="px-4 py-2">
-                            <EndLabel :end="cable.a" />
-                        </td>
-                        <td class="px-4 py-2">
-                            <EndLabel :end="cable.b" />
-                        </td>
-                        <td class="px-4 py-2">
-                            <Badge variant="outline" class="text-xs">
-                                {{ t(`cable.mediaKind.${cable.media}`) }}
-                                <template v-if="cable.strands">
-                                    ·
-                                    {{
-                                        t('cable.strandCount', {
-                                            count: cable.strands,
-                                        })
-                                    }}
-                                </template>
-                            </Badge>
-                        </td>
-                        <td
-                            class="px-4 py-2.5 text-right text-muted-foreground tabular-nums"
+                        {{ cable.length_cm ?? '—' }}
+                    </TableCell>
+                    <TableCell v-if="can.update" class="py-1.5 text-right">
+                        <Button
+                            size="icon"
+                            variant="ghost"
+                            class="size-8 text-destructive"
+                            :title="t('cable.disconnect')"
+                            @click="remove(cable)"
                         >
-                            {{ cable.length_cm ?? '—' }}
-                        </td>
-                        <td v-if="can.update" class="px-2 py-1.5 text-right">
-                            <Button
-                                size="icon"
-                                variant="ghost"
-                                class="size-8 text-destructive"
-                                :title="t('cable.disconnect')"
-                                @click="remove(cable)"
-                            >
-                                <Trash2 class="size-4" />
-                            </Button>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
+                            <Trash2 class="size-4" />
+                        </Button>
+                    </TableCell>
+                </TableRow>
+            </TableBody>
+        </Table>
     </div>
 </template>

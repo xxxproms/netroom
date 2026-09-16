@@ -12,6 +12,8 @@ use App\Support\Terminations;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -86,6 +88,27 @@ class CableController extends Controller
         $this->authorize('update', $cable);
 
         $cable->update($request->validated());
+
+        Inertia::flash('toast', ['type' => 'success', 'message' => __('Cable updated.')]);
+
+        return back();
+    }
+
+    /**
+     * Just the look of a cable — its label, length, colour and status — with no
+     * say over where it is plugged. The patching view edits cords through here,
+     * so it need not resend both ends of an uplink it only half knows.
+     */
+    public function appearance(Request $request, Cable $cable): RedirectResponse
+    {
+        $this->authorize('update', $cable);
+
+        $cable->update($request->validate([
+            'label' => ['nullable', 'string', 'max:60'],
+            'length_cm' => ['nullable', 'integer', 'min:1', 'max:1000000'],
+            'color' => ['nullable', 'string', 'regex:/^#[0-9A-Fa-f]{6}$/'],
+            'status' => ['required', Rule::in(Cable::STATUSES)],
+        ]));
 
         Inertia::flash('toast', ['type' => 'success', 'message' => __('Cable updated.')]);
 

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Device;
 use App\Models\DeviceModel;
+use App\Models\PortTemplate;
 use App\Models\Rack;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -68,6 +69,7 @@ class RackElevationController extends Controller
                 ])->all(),
             'statuses' => Device::STATUSES,
             'faces' => Device::FACES,
+            'portMedia' => PortTemplate::MEDIA,
             'can' => [
                 'update' => request()->user()->can('update', $rack),
                 'createDevice' => request()->user()->can('create', Device::class),

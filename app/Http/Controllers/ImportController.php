@@ -3,7 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Support\Export\InventoryExport;
+use App\Support\Import\ApplyCableImport;
 use App\Support\Import\ApplySwitchImport;
+use App\Support\Import\CableWorkbookParser;
 use App\Support\Import\SwitchWorkbookParser;
 use App\Support\Permissions;
 use Illuminate\Http\RedirectResponse;
@@ -25,6 +27,8 @@ class ImportController extends Controller
         private readonly SwitchWorkbookParser $parser,
         private readonly ApplySwitchImport $apply,
         private readonly InventoryExport $export,
+        private readonly CableWorkbookParser $cableParser,
+        private readonly ApplyCableImport $cableApply,
     ) {}
 
     private function authorizeImport(): void
@@ -53,11 +57,19 @@ class ImportController extends Controller
 
         abort_if($path === false, 500, 'The upload could not be stored.');
 
+        $filename = $request->file('file')->getClientOriginalName();
+
+        // Our own export carries a Commutation sheet — treat it as the return
+        // leg of the cabling round-trip rather than a switch registry.
+        if (CableWorkbookParser::handles(Storage::path($path))) {
+            return $this->cablingPreview($token, $filename, Storage::path($path));
+        }
+
         $parsed = $this->parser->parse(Storage::path($path));
 
         return Inertia::render('import/Preview', [
             'token' => $token,
-            'filename' => $request->file('file')->getClientOriginalName(),
+            'filename' => $filename,
             'domain' => $parsed['domain'],
             'sites' => $parsed['sites'],
             'counts' => $parsed['counts'],
@@ -76,6 +88,31 @@ class ImportController extends Controller
         ]);
     }
 
+    /**
+     * The cabling round-trip preview: what the Commutation sheet would lay,
+     * refresh, or skip — worked out against the panel, nothing written yet.
+     */
+    private function cablingPreview(string $token, string $filename, string $path): Response
+    {
+        $parsed = $this->cableParser->parse($path);
+
+        return Inertia::render('import/Cabling', [
+            'token' => $token,
+            'filename' => $filename,
+            'counts' => $parsed['counts'],
+            'rows' => array_map(fn (array $row) => [
+                'label' => $row['label'],
+                'a' => $row['a'],
+                'b' => $row['b'],
+                'media' => $row['media'],
+                'color' => $row['color'],
+                'status' => $row['status'],
+                'action' => $row['action'],
+                'reason' => $row['reason'],
+            ], $parsed['rows']),
+        ]);
+    }
+
     public function commit(Request $request): RedirectResponse
     {
         $this->authorizeImport();
@@ -87,6 +124,10 @@ class ImportController extends Controller
         $path = "imports/{$validated['token']}.xlsx";
 
         abort_unless(Storage::exists($path), 404);
+
+        if (CableWorkbookParser::handles(Storage::path($path))) {
+            return $this->commitCabling(Storage::path($path), $path);
+        }
 
         $parsed = $this->parser->parse(Storage::path($path));
         $result = $this->apply->apply($parsed);
@@ -102,6 +143,28 @@ class ImportController extends Controller
         ]);
 
         return to_route('devices.index');
+    }
+
+    /**
+     * @param  string  $fullPath  the stored file on disk
+     * @param  string  $path  its path within the storage disk, to clean up
+     */
+    private function commitCabling(string $fullPath, string $path): RedirectResponse
+    {
+        $result = $this->cableApply->apply($this->cableParser->parse($fullPath));
+
+        Storage::delete($path);
+
+        Inertia::flash('toast', [
+            'type' => 'success',
+            'message' => __('Cabling imported: :created laid, :updated refreshed, :skipped skipped.', [
+                'created' => $result['created'],
+                'updated' => $result['updated'],
+                'skipped' => $result['skipped'],
+            ]),
+        ]);
+
+        return to_route('cables.index');
     }
 
     /**

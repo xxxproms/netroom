@@ -8,6 +8,14 @@ import EmptyState from '@/components/EmptyState.vue';
 import PageHeader from '@/components/PageHeader.vue';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
+import {
+    Table,
+    TableBody,
+    TableCell,
+    TableHead,
+    TableHeader,
+    TableRow,
+} from '@/components/ui/table';
 import { destroy, index as deviceModels } from '@/routes/device-models';
 import type { DeviceModel } from '@/types';
 
@@ -52,78 +60,61 @@ function remove(model: DeviceModel): void {
 
         <EmptyState v-if="!models.length" :message="t('model.empty')" />
 
-        <div v-else class="overflow-x-auto rounded-xl border">
-            <table class="w-full text-[15px]">
-                <thead class="bg-muted/50 text-sm text-muted-foreground">
-                    <tr>
-                        <th class="px-4 py-3 text-left font-medium">
-                            {{ t('model.vendor') }}
-                        </th>
-                        <th class="px-4 py-3 text-left font-medium">
-                            {{ t('model.model') }}
-                        </th>
-                        <th class="px-4 py-3 text-left font-medium">
-                            {{ t('common.type') }}
-                        </th>
-                        <th class="px-4 py-3 text-right font-medium">
-                            {{ t('model.ports') }}
-                        </th>
-                        <th class="px-4 py-3 text-right font-medium">U</th>
-                        <th
-                            v-if="can.manage"
-                            class="px-4 py-3 text-right font-medium"
-                        >
-                            {{ t('common.actions') }}
-                        </th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr
-                        v-for="model in models"
-                        :key="model.id"
-                        class="border-t"
+        <Table v-else>
+            <TableHeader>
+                <TableRow>
+                    <TableHead>{{ t('model.vendor') }}</TableHead>
+                    <TableHead>{{ t('model.model') }}</TableHead>
+                    <TableHead>{{ t('common.type') }}</TableHead>
+                    <TableHead class="text-right">
+                        {{ t('model.ports') }}
+                    </TableHead>
+                    <TableHead class="text-right">U</TableHead>
+                    <TableHead v-if="can.manage" class="text-right">
+                        {{ t('common.actions') }}
+                    </TableHead>
+                </TableRow>
+            </TableHeader>
+            <TableBody>
+                <TableRow v-for="model in models" :key="model.id">
+                    <TableCell class="text-muted-foreground">
+                        {{ model.vendor }}
+                    </TableCell>
+                    <TableCell class="font-medium">{{ model.model }}</TableCell>
+                    <TableCell>
+                        <Badge variant="secondary">
+                            {{ t(`model.kind.${model.kind}`) }}
+                        </Badge>
+                    </TableCell>
+                    <TableCell class="text-right tabular-nums">
+                        {{ model.port_count }}
+                    </TableCell>
+                    <TableCell
+                        class="text-right text-muted-foreground tabular-nums"
                     >
-                        <td class="px-4 py-3 text-muted-foreground">
-                            {{ model.vendor }}
-                        </td>
-                        <td class="px-4 py-3 font-medium">
-                            {{ model.model }}
-                        </td>
-                        <td class="px-4 py-3">
-                            <Badge variant="secondary">
-                                {{ t(`model.kind.${model.kind}`) }}
-                            </Badge>
-                        </td>
-                        <td class="px-4 py-3 text-right tabular-nums">
-                            {{ model.port_count }}
-                        </td>
-                        <td
-                            class="px-4 py-3 text-right text-muted-foreground tabular-nums"
+                        {{ model.u_height }}
+                    </TableCell>
+                    <TableCell v-if="can.manage" class="text-right">
+                        <Button
+                            size="icon"
+                            variant="ghost"
+                            class="size-8"
+                            @click="editing = model"
                         >
-                            {{ model.u_height }}
-                        </td>
-                        <td v-if="can.manage" class="px-2 py-2 text-right">
-                            <Button
-                                size="icon"
-                                variant="ghost"
-                                class="size-8"
-                                @click="editing = model"
-                            >
-                                <Pencil class="size-4" />
-                            </Button>
-                            <Button
-                                size="icon"
-                                variant="ghost"
-                                class="size-8 text-destructive"
-                                @click="remove(model)"
-                            >
-                                <Trash2 class="size-4" />
-                            </Button>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
+                            <Pencil class="size-4" />
+                        </Button>
+                        <Button
+                            size="icon"
+                            variant="ghost"
+                            class="size-8 text-destructive"
+                            @click="remove(model)"
+                        >
+                            <Trash2 class="size-4" />
+                        </Button>
+                    </TableCell>
+                </TableRow>
+            </TableBody>
+        </Table>
     </div>
 
     <DeviceModelFormDialog

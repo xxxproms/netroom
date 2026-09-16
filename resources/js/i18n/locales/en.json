@@ -199,6 +199,26 @@
         "remember": "Remember me",
         "forgot": "Forgot password?"
     },
+    "server": {
+        "new": "Server",
+        "hint": "Add a server straight to the rack — set its height and network port count.",
+        "units": "Units (U)",
+        "portCount": "Network ports",
+        "portMedia": "Port media"
+    },
+    "patch": {
+        "mode": "Patching",
+        "elevation": "Elevation",
+        "uplinks": "External links (uplinks)",
+        "empty": "Nothing with ports in this rack yet.",
+        "selected": "Selected",
+        "selectHint": "Click a port to light up both ends of its cable.",
+        "dragHint": "Drag one port onto another to cable them, or onto “Uplink” to run it to another rack or server room.",
+        "clear": "Clear",
+        "newUplink": "Uplink",
+        "dragUplinkHint": "Drag a port here to run an uplink",
+        "exportPng": "Diagram as PNG"
+    },
     "device": {
         "title": "Devices",
         "one": "Device",
@@ -290,6 +310,7 @@
         "label": "Label",
         "lengthCm": "Length, cm",
         "cm": "cm",
+        "color": "Colour",
         "endA": "End A",
         "endB": "End B",
         "empty": "No cables yet",
@@ -411,7 +432,38 @@
         "wPortMismatch": "\"{switch}\": more ports in the sheet ({sheet_ports}) than the model has ({model_ports})",
         "exportTitle": "Export",
         "exportHint": "Download the documented network (devices, VLANs, subnets, workplaces) as an Excel workbook — a backup of the current site scope.",
-        "exportButton": "Download .xlsx"
+        "exportButton": "Download .xlsx",
+        "uploadHintCabling": "Or upload a NetRoom export with a “Commutation” sheet — edited cable colours, labels and statuses flow back into the panel"
+    },
+    "cabling": {
+        "preview": "Cabling preview",
+        "previewHint": "Cable edits from the “Commutation” sheet will be applied to the panel — review and confirm",
+        "confirm": "Apply cabling",
+        "importing": "Applying…",
+        "countCreate": "Lay",
+        "countUpdate": "Refresh",
+        "countSkip": "Skip",
+        "countTotal": "Total rows",
+        "colLabel": "Label",
+        "colA": "End A",
+        "colB": "End B",
+        "colMedia": "Media",
+        "colStatus": "Status",
+        "colAction": "Action",
+        "actionCreate": "Lay",
+        "actionUpdate": "Refresh",
+        "actionSkip": "Skip",
+        "empty": "No cables on the “Commutation” sheet",
+        "skipHint": "Rows whose ends can't be matched or are already patched are skipped; nothing is rerouted",
+        "reason": {
+            "unknown_a": "End A not found in the panel",
+            "unknown_b": "End B not found in the panel",
+            "ambiguous_a": "End A name occurs at more than one site",
+            "ambiguous_b": "End B name is ambiguous (port or outlet in several places)",
+            "same_end": "Both ends point at the same port",
+            "a_busy": "End A's port already holds another cable",
+            "b_busy": "End B's port already holds another cable"
+        }
     },
     "dashboard": {
         "title": "Dashboard",

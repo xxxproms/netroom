@@ -13,8 +13,10 @@ use App\Http\Controllers\OutletController;
 use App\Http\Controllers\PortController;
 use App\Http\Controllers\RackController;
 use App\Http\Controllers\RackElevationController;
+use App\Http\Controllers\RackPatchController;
 use App\Http\Controllers\RoomController;
 use App\Http\Controllers\SearchController;
+use App\Http\Controllers\ServerController;
 use App\Http\Controllers\SiteContextController;
 use App\Http\Controllers\SiteController;
 use App\Http\Controllers\SubnetController;
@@ -40,10 +42,12 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::resource('racks', RackController::class)->except(['create', 'edit', 'show']);
 
     Route::get('racks/{rack}', [RackElevationController::class, 'show'])->name('racks.show');
+    Route::get('racks/{rack}/patch', [RackPatchController::class, 'show'])->name('racks.patch');
     Route::put('racks/{rack}/devices/{device}/position', [RackElevationController::class, 'move'])
         ->name('racks.devices.move');
 
     Route::resource('devices', DeviceController::class)->except(['create', 'edit']);
+    Route::post('servers', [ServerController::class, 'store'])->name('servers.store');
     Route::patch('ports/{port}', [PortController::class, 'update'])->name('ports.update');
 
     Route::get('devices/{device}/vlans', [VlanMatrixController::class, 'show'])->name('devices.vlans');
@@ -58,6 +62,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     Route::get('cables/targets', [CableTargetController::class, 'index'])->name('cables.targets');
     Route::resource('cables', CableController::class)->only(['index', 'store', 'update', 'destroy']);
+    Route::patch('cables/{cable}/appearance', [CableController::class, 'appearance'])->name('cables.appearance');
 
     Route::get('ports/{port}/trace', [TraceController::class, 'port'])->name('ports.trace');
     Route::get('outlets/{outlet}/trace', [TraceController::class, 'outlet'])->name('outlets.trace');

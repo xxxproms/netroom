@@ -17,6 +17,14 @@ import TraceDialog from '@/components/cables/TraceDialog.vue';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import {
+    Table,
+    TableBody,
+    TableCell,
+    TableHead,
+    TableHeader,
+    TableRow,
+} from '@/components/ui/table';
 import { destroy as removeCable } from '@/routes/cables';
 import { trace, update } from '@/routes/ports';
 import type { Port } from '@/types';
@@ -103,162 +111,148 @@ function toggleUplink(port: Port): void {
             </span>
         </h2>
 
-        <div class="overflow-x-auto rounded-xl border">
-            <table class="w-full text-[15px]">
-                <thead class="bg-muted/50 text-sm text-muted-foreground">
-                    <tr>
-                        <th class="w-16 px-4 py-3 text-left font-medium">
-                            {{ t('port.number') }}
-                        </th>
-                        <th class="w-28 px-4 py-3 text-left font-medium">
-                            {{ t('model.media') }}
-                        </th>
-                        <th class="w-24 px-4 py-3 text-right font-medium">
-                            {{ t('model.speed') }}
-                        </th>
-                        <th class="px-4 py-3 text-left font-medium">
-                            {{ t('port.description') }}
-                        </th>
-                        <th class="px-4 py-3 text-left font-medium">
-                            {{ t('cable.connectedTo') }}
-                        </th>
-                        <th class="w-36 px-4 py-3 text-right font-medium">
-                            {{ t('common.actions') }}
-                        </th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr
-                        v-for="port in group.ports"
-                        :key="port.id"
-                        class="border-t"
-                        :class="{ 'opacity-50': !port.enabled }"
+        <Table>
+            <TableHeader>
+                <TableRow>
+                    <TableHead class="w-16">{{ t('port.number') }}</TableHead>
+                    <TableHead class="w-28">{{ t('model.media') }}</TableHead>
+                    <TableHead class="w-24 text-right">
+                        {{ t('model.speed') }}
+                    </TableHead>
+                    <TableHead>{{ t('port.description') }}</TableHead>
+                    <TableHead>{{ t('cable.connectedTo') }}</TableHead>
+                    <TableHead class="w-36 text-right">
+                        {{ t('common.actions') }}
+                    </TableHead>
+                </TableRow>
+            </TableHeader>
+            <TableBody>
+                <TableRow
+                    v-for="port in group.ports"
+                    :key="port.id"
+                    :class="{ 'opacity-50': !port.enabled }"
+                >
+                    <TableCell class="font-mono">{{ port.name }}</TableCell>
+                    <TableCell>
+                        <Badge variant="outline" class="text-xs">
+                            {{ t(`model.mediaKind.${port.media}`) }}
+                        </Badge>
+                    </TableCell>
+                    <TableCell
+                        class="text-right text-muted-foreground tabular-nums"
                     >
-                        <td class="px-4 py-2.5 font-mono">{{ port.name }}</td>
-                        <td class="px-4 py-2">
-                            <Badge variant="outline" class="text-xs">
-                                {{ t(`model.mediaKind.${port.media}`) }}
-                            </Badge>
-                        </td>
-                        <td
-                            class="px-4 py-2.5 text-right text-muted-foreground tabular-nums"
+                        {{ port.speed_mbps ?? '—' }}
+                    </TableCell>
+                    <TableCell>
+                        <div
+                            v-if="editingId === port.id"
+                            class="flex items-center gap-1"
                         >
-                            {{ port.speed_mbps ?? '—' }}
-                        </td>
-                        <td class="px-4 py-2">
-                            <div
-                                v-if="editingId === port.id"
-                                class="flex items-center gap-1"
-                            >
-                                <Input
-                                    v-model="draft"
-                                    class="h-8"
-                                    autofocus
-                                    @keyup.enter="save(port)"
-                                    @keyup.escape="editingId = null"
-                                />
-                                <Button
-                                    size="icon"
-                                    variant="ghost"
-                                    class="size-8"
-                                    @click="save(port)"
-                                >
-                                    <Check class="size-4" />
-                                </Button>
-                                <Button
-                                    size="icon"
-                                    variant="ghost"
-                                    class="size-8"
-                                    @click="editingId = null"
-                                >
-                                    <X class="size-4" />
-                                </Button>
-                            </div>
-                            <span
-                                v-else
-                                class="flex items-center gap-2"
-                                :class="{
-                                    'text-muted-foreground': !port.description,
-                                }"
-                            >
-                                {{ port.description || t('port.free') }}
-                                <Badge
-                                    v-if="port.is_uplink"
-                                    variant="secondary"
-                                    class="text-xs"
-                                >
-                                    {{ t('port.uplink') }}
-                                </Badge>
-                            </span>
-                        </td>
-                        <td class="px-4 py-2">
-                            <EndLabel
-                                v-if="port.link?.far"
-                                :end="port.link.far"
+                            <Input
+                                v-model="draft"
+                                class="h-8"
+                                autofocus
+                                @keyup.enter="save(port)"
+                                @keyup.escape="editingId = null"
                             />
-                            <span v-else class="text-sm text-muted-foreground">
-                                {{ t('cable.notConnected') }}
-                            </span>
-                        </td>
-                        <td class="px-2 py-1.5 text-right whitespace-nowrap">
                             <Button
-                                v-if="port.link"
                                 size="icon"
                                 variant="ghost"
                                 class="size-8"
-                                :title="t('trace.title')"
-                                @click="tracing = port"
+                                @click="save(port)"
                             >
-                                <RouteIcon class="size-4" />
+                                <Check class="size-4" />
                             </Button>
                             <Button
-                                v-if="canCable && !port.link"
                                 size="icon"
                                 variant="ghost"
                                 class="size-8"
-                                :title="t('cable.connect')"
-                                @click="connecting = port"
+                                @click="editingId = null"
                             >
-                                <Plug class="size-4" />
+                                <X class="size-4" />
                             </Button>
-                            <Button
-                                v-if="canCable && port.link"
-                                size="icon"
-                                variant="ghost"
-                                class="size-8"
-                                :title="t('cable.disconnect')"
-                                @click="disconnect(port)"
+                        </div>
+                        <span
+                            v-else
+                            class="flex items-center gap-2"
+                            :class="{
+                                'text-muted-foreground': !port.description,
+                            }"
+                        >
+                            {{ port.description || t('port.free') }}
+                            <Badge
+                                v-if="port.is_uplink"
+                                variant="secondary"
+                                class="text-xs"
                             >
-                                <Unplug class="size-4" />
-                            </Button>
-                            <Button
-                                v-if="editable"
-                                size="icon"
-                                variant="ghost"
-                                class="size-8"
-                                :title="t('port.uplink')"
-                                @click="toggleUplink(port)"
-                            >
-                                <ArrowUpFromLine
-                                    class="size-4"
-                                    :class="{ 'text-primary': port.is_uplink }"
-                                />
-                            </Button>
-                            <Button
-                                v-if="editable"
-                                size="icon"
-                                variant="ghost"
-                                class="size-8"
-                                :title="t('common.edit')"
-                                @click="edit(port)"
-                            >
-                                <Pencil class="size-4" />
-                            </Button>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
+                                {{ t('port.uplink') }}
+                            </Badge>
+                        </span>
+                    </TableCell>
+                    <TableCell>
+                        <EndLabel v-if="port.link?.far" :end="port.link.far" />
+                        <span v-else class="text-sm text-muted-foreground">
+                            {{ t('cable.notConnected') }}
+                        </span>
+                    </TableCell>
+                    <TableCell class="py-1.5 text-right whitespace-nowrap">
+                        <Button
+                            v-if="port.link"
+                            size="icon"
+                            variant="ghost"
+                            class="size-8"
+                            :title="t('trace.title')"
+                            @click="tracing = port"
+                        >
+                            <RouteIcon class="size-4" />
+                        </Button>
+                        <Button
+                            v-if="canCable && !port.link"
+                            size="icon"
+                            variant="ghost"
+                            class="size-8"
+                            :title="t('cable.connect')"
+                            @click="connecting = port"
+                        >
+                            <Plug class="size-4" />
+                        </Button>
+                        <Button
+                            v-if="canCable && port.link"
+                            size="icon"
+                            variant="ghost"
+                            class="size-8"
+                            :title="t('cable.disconnect')"
+                            @click="disconnect(port)"
+                        >
+                            <Unplug class="size-4" />
+                        </Button>
+                        <Button
+                            v-if="editable"
+                            size="icon"
+                            variant="ghost"
+                            class="size-8"
+                            :title="t('port.uplink')"
+                            @click="toggleUplink(port)"
+                        >
+                            <ArrowUpFromLine
+                                class="size-4"
+                                :class="{ 'text-primary': port.is_uplink }"
+                            />
+                        </Button>
+                        <Button
+                            v-if="editable"
+                            size="icon"
+                            variant="ghost"
+                            class="size-8"
+                            :title="t('common.edit')"
+                            @click="edit(port)"
+                        >
+                            <Pencil class="size-4" />
+                        </Button>
+                    </TableCell>
+                </TableRow>
+            </TableBody>
+        </Table>
     </section>
 
     <CableFormDialog

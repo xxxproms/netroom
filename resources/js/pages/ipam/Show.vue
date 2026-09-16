@@ -16,6 +16,14 @@ import PageHeader from '@/components/PageHeader.vue';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import {
+    Table,
+    TableBody,
+    TableCell,
+    TableHead,
+    TableHeader,
+    TableRow,
+} from '@/components/ui/table';
 import { store as storeAddress } from '@/routes/ip-addresses';
 import { destroy as removeAddress } from '@/routes/ip-addresses';
 import { destroy, index as subnetsIndex } from '@/routes/subnets';
@@ -227,115 +235,99 @@ function barColor(percent: number): string {
             </p>
         </Form>
 
-        <div class="overflow-x-auto rounded-xl border">
-            <table class="w-full text-[15px]">
-                <thead class="bg-muted/50 text-sm text-muted-foreground">
-                    <tr>
-                        <th class="w-40 px-4 py-3 text-left font-medium">
-                            {{ t('ip.address') }}
-                        </th>
-                        <th class="px-4 py-3 text-left font-medium">
-                            {{ t('ip.host') }}
-                        </th>
-                        <th class="w-32 px-4 py-3 text-left font-medium">
-                            {{ t('ip.source') }}
-                        </th>
-                        <th class="w-28 px-4 py-3 text-left font-medium">
-                            {{ t('common.status') }}
-                        </th>
-                        <th
-                            v-if="can.manage"
-                            class="w-16 px-4 py-3 text-right font-medium"
-                        ></th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr
-                        v-for="occupant in summary.occupants"
-                        :key="occupant.long"
-                        class="border-t"
-                        :class="{ 'bg-red-500/5': occupant.conflict }"
-                    >
-                        <td class="px-4 py-2.5 font-mono">
-                            <span class="flex items-center gap-2">
-                                {{ occupant.address }}
-                                <Badge
-                                    v-if="occupant.is_gateway"
-                                    variant="outline"
-                                    class="text-xs"
-                                >
-                                    {{ t('subnet.gateway') }}
-                                </Badge>
-                                <AlertTriangle
-                                    v-if="occupant.conflict"
-                                    class="size-4 text-red-500"
-                                />
-                            </span>
-                        </td>
-                        <td class="px-4 py-2">
-                            <div
-                                v-for="(claim, index) in occupant.claims"
-                                :key="index"
-                                class="flex items-center gap-2"
-                            >
-                                <component
-                                    :is="claim.source === 'device' ? Cpu : User"
-                                    class="size-4 text-muted-foreground"
-                                />
-                                <span>
-                                    {{
-                                        claim.hostname ??
-                                        claim.device?.name ??
-                                        '—'
-                                    }}
-                                </span>
-                            </div>
-                        </td>
-                        <td class="px-4 py-2 text-sm text-muted-foreground">
-                            <span
-                                v-for="(claim, index) in occupant.claims"
-                                :key="index"
-                                class="block"
-                            >
-                                {{ t(`ip.sourceKind.${claim.source}`) }}
-                            </span>
-                        </td>
-                        <td class="px-4 py-2">
+        <Table>
+            <TableHeader>
+                <TableRow>
+                    <TableHead class="w-40">{{ t('ip.address') }}</TableHead>
+                    <TableHead>{{ t('ip.host') }}</TableHead>
+                    <TableHead class="w-32">{{ t('ip.source') }}</TableHead>
+                    <TableHead class="w-28">{{ t('common.status') }}</TableHead>
+                    <TableHead v-if="can.manage" class="w-16 text-right" />
+                </TableRow>
+            </TableHeader>
+            <TableBody>
+                <TableRow
+                    v-for="occupant in summary.occupants"
+                    :key="occupant.long"
+                    :class="{ 'bg-red-500/5': occupant.conflict }"
+                >
+                    <TableCell class="font-mono">
+                        <span class="flex items-center gap-2">
+                            {{ occupant.address }}
                             <Badge
-                                v-for="(claim, index) in occupant.claims"
-                                :key="index"
+                                v-if="occupant.is_gateway"
                                 variant="outline"
                                 class="text-xs"
                             >
-                                {{ t(`ip.statusKind.${claim.status}`) }}
+                                {{ t('subnet.gateway') }}
                             </Badge>
-                        </td>
-                        <td v-if="can.manage" class="px-2 py-1.5 text-right">
-                            <Button
-                                v-if="reservationId(occupant) !== null"
-                                size="icon"
-                                variant="ghost"
-                                class="size-8 text-destructive"
-                                :title="t('ip.release')"
-                                @click="
-                                    releaseReservation(reservationId(occupant)!)
-                                "
-                            >
-                                <Trash2 class="size-4" />
-                            </Button>
-                        </td>
-                    </tr>
-                    <tr v-if="!summary.occupants.length">
-                        <td
-                            colspan="5"
-                            class="px-4 py-6 text-center text-sm text-muted-foreground"
+                            <AlertTriangle
+                                v-if="occupant.conflict"
+                                class="size-4 text-red-500"
+                            />
+                        </span>
+                    </TableCell>
+                    <TableCell>
+                        <div
+                            v-for="(claim, index) in occupant.claims"
+                            :key="index"
+                            class="flex items-center gap-2"
                         >
-                            {{ t('subnet.noAddresses') }}
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
+                            <component
+                                :is="claim.source === 'device' ? Cpu : User"
+                                class="size-4 text-muted-foreground"
+                            />
+                            <span>
+                                {{
+                                    claim.hostname ?? claim.device?.name ?? '—'
+                                }}
+                            </span>
+                        </div>
+                    </TableCell>
+                    <TableCell class="text-sm text-muted-foreground">
+                        <span
+                            v-for="(claim, index) in occupant.claims"
+                            :key="index"
+                            class="block"
+                        >
+                            {{ t(`ip.sourceKind.${claim.source}`) }}
+                        </span>
+                    </TableCell>
+                    <TableCell>
+                        <Badge
+                            v-for="(claim, index) in occupant.claims"
+                            :key="index"
+                            variant="outline"
+                            class="text-xs"
+                        >
+                            {{ t(`ip.statusKind.${claim.status}`) }}
+                        </Badge>
+                    </TableCell>
+                    <TableCell v-if="can.manage" class="py-1.5 text-right">
+                        <Button
+                            v-if="reservationId(occupant) !== null"
+                            size="icon"
+                            variant="ghost"
+                            class="size-8 text-destructive"
+                            :title="t('ip.release')"
+                            @click="
+                                releaseReservation(reservationId(occupant)!)
+                            "
+                        >
+                            <Trash2 class="size-4" />
+                        </Button>
+                    </TableCell>
+                </TableRow>
+                <TableRow v-if="!summary.occupants.length">
+                    <TableCell
+                        colspan="5"
+                        class="py-6 text-center text-sm text-muted-foreground"
+                    >
+                        {{ t('subnet.noAddresses') }}
+                    </TableCell>
+                </TableRow>
+            </TableBody>
+        </Table>
     </div>
 
     <SubnetFormDialog

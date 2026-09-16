@@ -59,6 +59,9 @@ function onPick(event: Event): void {
                     <span class="max-w-md text-xs text-muted-foreground/80">
                         {{ t('import.uploadHint') }}
                     </span>
+                    <span class="max-w-md text-xs text-muted-foreground/60">
+                        {{ t('import.uploadHintCabling') }}
+                    </span>
                     <input
                         id="import-file"
                         type="file"

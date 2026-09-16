@@ -2,11 +2,17 @@
 
 namespace App\Support\Export;
 
+use App\Models\Cable;
 use App\Models\Device;
+use App\Models\Outlet;
+use App\Models\Port;
 use App\Models\Subnet;
 use App\Models\Vlan;
 use App\Models\Workplace;
 use App\Support\SiteContext;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\MorphTo;
+use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\Collection;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
@@ -28,7 +34,11 @@ class InventoryExport
         $book = new Spreadsheet;
         $book->removeSheetByIndex(0);
 
-        $this->sheet($book, 'Devices', ['Name', 'Model', 'Site', 'Mgmt IP', 'Status'], $this->devices());
+        $this->sheet($book, 'Devices', ['Name', 'Model', 'Site', 'Mgmt IP', 'Status'], $this->devices(), 5);
+        $this->sheet($book, 'Commutation', [
+            'Label', 'Device A', 'Port A', 'Device / workplace B', 'Port / socket B',
+            'Media', 'Strands', 'Length cm', 'Colour', 'Status',
+        ], $this->commutation(), 10);
         $this->sheet($book, 'VLANs', ['VID', 'Name', 'Domain'], $this->vlans());
         $this->sheet($book, 'Subnets', ['CIDR', 'Name', 'Gateway', 'Domain'], $this->subnets());
         $this->sheet($book, 'Workplaces', ['Name', 'Person', 'Site'], $this->workplaces());
@@ -44,17 +54,74 @@ class InventoryExport
     /**
      * @param  list<string>  $headings
      * @param  array<int, array<int, string|int|null>>  $rows
+     * @param  int|null  $statusColumn  1-based column to tint by status, if any.
      */
-    private function sheet(Spreadsheet $book, string $title, array $headings, array $rows): void
+    private function sheet(Spreadsheet $book, string $title, array $headings, array $rows, ?int $statusColumn = null): void
     {
         $sheet = $book->createSheet();
         $sheet->setTitle($title);
         $sheet->fromArray($headings, null, 'A1');
-        $sheet->getStyle('A1:'.$sheet->getHighestColumn().'1')->getFont()->setBold(true);
 
         if ($rows !== []) {
             $sheet->fromArray($rows, null, 'A2');
         }
+
+        SheetStyler::apply($sheet, count($headings), count($rows), $statusColumn);
+    }
+
+    /**
+     * Every cable at the site, both ends named the way the journal shows them.
+     *
+     * @return array<int, array<int, string|int|null>>
+     */
+    private function commutation(): array
+    {
+        $ends = function (Relation $morph): void {
+            if ($morph instanceof MorphTo) {
+                $morph->morphWith([
+                    Port::class => ['device'],
+                    Outlet::class => ['workplace'],
+                ]);
+            }
+        };
+
+        return $this->context->scope(Cable::query())
+            ->with(['a' => $ends, 'b' => $ends])
+            ->orderBy('id')
+            ->get()
+            ->map(fn (Cable $cable) => [
+                $cable->label,
+                $this->endOwner($cable->a),
+                $this->endSocket($cable->a),
+                $this->endOwner($cable->b),
+                $this->endSocket($cable->b),
+                $cable->media,
+                $cable->strands,
+                $cable->length_cm,
+                $cable->color,
+                $cable->status,
+            ])
+            ->all();
+    }
+
+    /** The device or workplace an end belongs to. */
+    private function endOwner(Model $end): ?string
+    {
+        return match (true) {
+            $end instanceof Port => $end->device?->name,
+            $end instanceof Outlet => $end->workplace?->name,
+            default => null,
+        };
+    }
+
+    /** The port name or socket label at an end. */
+    private function endSocket(Model $end): ?string
+    {
+        return match (true) {
+            $end instanceof Port => $end->name,
+            $end instanceof Outlet => $end->label,
+            default => null,
+        };
     }
 
     /**

@@ -215,6 +215,50 @@ export type CableLink = {
 /** A trace alternates ends and the cables between them. */
 export type TraceStep = CableEnd | Cable;
 
+/** One port as the commutation view sees it — a socket that may carry a cable. */
+export type PatchPort = {
+    id: number;
+    name: string;
+    number: number;
+    media: string;
+    role: string;
+    is_uplink: boolean;
+    enabled: boolean;
+    link?: CableLink | null;
+};
+
+export type PatchDevice = {
+    id: number;
+    name: string;
+    kind: string;
+    color: string | null;
+    position_u: number | null;
+    u_height: number;
+    face: string;
+    ports: PatchPort[];
+};
+
+/** A cable that leaves the rack — an uplink to another rack or a workplace. */
+export type PatchExternal = {
+    cable_id: number;
+    near_port_id: number;
+    media: string;
+    color: string | null;
+    status: string;
+    label: string | null;
+    length_cm: number | null;
+    far: { label: string; sub: string; port_id: number };
+};
+
+export type RackPatch = {
+    devices: PatchDevice[];
+    externals: PatchExternal[];
+    statuses: string[];
+    site_id: number | null;
+    sites: { id: number; name: string }[];
+    can: { wire: boolean };
+};
+
 export type MapSite = {
     id: number;
     name: string;
