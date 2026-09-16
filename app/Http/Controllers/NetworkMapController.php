@@ -4,12 +4,15 @@ namespace App\Http\Controllers;
 
 use App\Models\Cable;
 use App\Models\Device;
+use App\Models\MapAnnotation;
 use App\Models\Port;
 use App\Models\Site;
 use App\Models\Tunnel;
 use App\Support\SiteContext;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Validation\Rule;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -29,6 +32,7 @@ class NetworkMapController extends Controller
         $ids = $sites->pluck('id');
 
         $sites->loadCount(['rooms', 'devices']);
+        $sites->load('vlanDomain:id,name');
 
         $tunnels = Tunnel::with([
             'siteA:id,name,code',
@@ -53,8 +57,10 @@ class NetworkMapController extends Controller
                 'map_y' => $site->map_y,
                 'rooms_count' => $site->rooms_count,
                 'devices_count' => $site->devices_count,
+                'vlan_domain' => $site->vlanDomain?->name,
             ])->values(),
             'tunnels' => $tunnels->map(fn (Tunnel $tunnel) => $this->tunnelData($tunnel))->values(),
+            'annotations' => $this->annotations(null),
             'types' => Tunnel::TYPES,
             'statuses' => Tunnel::STATUSES,
             'can' => [
@@ -68,8 +74,11 @@ class NetworkMapController extends Controller
         $this->authorize('view', $site);
 
         $devices = $site->devices()
-            ->with('deviceModel:id,vendor,model,kind')
+            ->with(['deviceModel:id,vendor,model,kind', 'rack:id,name'])
+            ->withCount('ports')
             ->get();
+
+        $vlans = $this->deviceVlans($site);
 
         return Inertia::render('map/Site', [
             'site' => $site->only(['id', 'name', 'code']),
@@ -78,11 +87,17 @@ class NetworkMapController extends Controller
                 'name' => $device->name,
                 'kind' => $device->deviceModel->kind,
                 'model' => "{$device->deviceModel->vendor} {$device->deviceModel->model}",
+                'status' => $device->status,
+                'ports_count' => $device->ports_count,
+                'mgmt_ip' => $device->mgmt_ip,
                 'color' => $device->color,
                 'map_x' => $device->map_x,
                 'map_y' => $device->map_y,
+                'rack' => $device->rack?->only(['id', 'name']),
+                'vlans' => $vlans[$device->id] ?? [],
             ])->values(),
             'links' => $this->intraSiteLinks($site),
+            'annotations' => $this->annotations($site),
             'can' => [
                 'arrange' => request()->user()->can('update', $site),
             ],
@@ -111,6 +126,205 @@ class NetworkMapController extends Controller
         $device->update($this->position($request));
 
         return back();
+    }
+
+    /**
+     * Renames a site and recolours it straight from the map — a light touch that
+     * skips the full site form, so tidying the diagram stays on one screen.
+     */
+    public function styleSite(Request $request, Site $site): RedirectResponse
+    {
+        $this->authorize('update', $site);
+
+        $site->update($request->validate([
+            'name' => ['required', 'string', 'max:120'],
+            'color' => ['nullable', 'string', 'regex:/^#[0-9A-Fa-f]{6}$/'],
+        ]));
+
+        return back();
+    }
+
+    /**
+     * Renames and recolours a device from the map, keeping names unique within
+     * the site just as the full device form does.
+     */
+    public function styleDevice(Request $request, Device $device): RedirectResponse
+    {
+        $this->authorize('update', $device);
+
+        $device->update($request->validate([
+            'name' => [
+                'required', 'string', 'max:120',
+                Rule::unique('devices')
+                    ->where('site_id', $device->site_id)
+                    ->ignore($device),
+            ],
+            'color' => ['nullable', 'string', 'regex:/^#[0-9A-Fa-f]{6}$/'],
+        ]));
+
+        return back();
+    }
+
+    /**
+     * Saves a whole batch of node positions in one request — what auto-layout,
+     * align/distribute, nudging and layout undo all lean on so the map does not
+     * fire one round-trip per node. Each node is authorised on its own.
+     */
+    public function positions(Request $request): RedirectResponse
+    {
+        $data = $request->validate([
+            'nodes' => ['required', 'array', 'max:1000'],
+            'nodes.*.kind' => ['required', Rule::in(['site', 'device', 'annotation'])],
+            'nodes.*.id' => ['required', 'integer'],
+            'nodes.*.map_x' => ['required', 'integer', 'min:0', 'max:20000'],
+            'nodes.*.map_y' => ['required', 'integer', 'min:0', 'max:20000'],
+        ]);
+
+        foreach ($data['nodes'] as $node) {
+            $id = (int) $node['id'];
+
+            $model = match ($node['kind']) {
+                'site' => Site::find($id),
+                'device' => Device::find($id),
+                default => MapAnnotation::find($id),
+            };
+
+            if (! $model) {
+                continue;
+            }
+
+            $this->authorize('update', $model);
+
+            $model->update([
+                'map_x' => (int) $node['map_x'],
+                'map_y' => (int) $node['map_y'],
+            ]);
+        }
+
+        return back();
+    }
+
+    /**
+     * Drops a zone or a note on a map. A zone frames the kit that shares a
+     * server room, a floor or a VLAN domain; a note explains what the diagram
+     * cannot say on its own.
+     */
+    public function storeAnnotation(Request $request): RedirectResponse
+    {
+        $this->authorize('create', MapAnnotation::class);
+
+        $data = $request->validate($this->annotationRules() + [
+            'site_id' => ['nullable', 'integer', 'exists:sites,id'],
+            'type' => ['required', Rule::in(MapAnnotation::TYPES)],
+        ]);
+
+        // A site drawing may only be added by someone who may arrange that site.
+        if (! empty($data['site_id'])) {
+            $this->authorize('update', Site::findOrFail((int) $data['site_id']));
+        }
+
+        MapAnnotation::create($data);
+
+        return back();
+    }
+
+    /**
+     * Moves, resizes, retitles or recolours a drawing — the map sends whichever
+     * of those it changed, so dragging never overwrites the text.
+     */
+    public function updateAnnotation(Request $request, MapAnnotation $annotation): RedirectResponse
+    {
+        $this->authorize('update', $annotation);
+
+        $annotation->update($request->validate($this->annotationRules(sometimes: true)));
+
+        return back();
+    }
+
+    public function destroyAnnotation(MapAnnotation $annotation): RedirectResponse
+    {
+        $this->authorize('delete', $annotation);
+
+        $annotation->delete();
+
+        return back();
+    }
+
+    /**
+     * @return array<string, array<int, mixed>>
+     */
+    private function annotationRules(bool $sometimes = false): array
+    {
+        $when = fn (array $rules) => $sometimes ? array_merge(['sometimes'], $rules) : $rules;
+
+        return [
+            'text' => $when(['nullable', 'string', 'max:200']),
+            'map_x' => $when(['required', 'integer', 'min:0', 'max:20000']),
+            'map_y' => $when(['required', 'integer', 'min:0', 'max:20000']),
+            'width' => $when(['required', 'integer', 'min:60', 'max:20000']),
+            'height' => $when(['required', 'integer', 'min:40', 'max:20000']),
+            'color' => $when(['nullable', 'string', 'regex:/^#[0-9A-Fa-f]{6}$/']),
+            // Always optional: the column has a default, and a drag never sends it.
+            'z' => ['sometimes', 'integer', 'min:0', 'max:100'],
+        ];
+    }
+
+    /**
+     * The drawings of one map: a null site means the global one.
+     *
+     * @return array<int, array<string, mixed>>
+     */
+    private function annotations(?Site $site): array
+    {
+        return MapAnnotation::query()
+            ->when(
+                $site,
+                fn ($query) => $query->where('site_id', $site->id),
+                fn ($query) => $query->whereNull('site_id'),
+            )
+            ->orderBy('z')
+            ->orderBy('id')
+            ->get()
+            ->map(fn (MapAnnotation $annotation) => [
+                'id' => $annotation->id,
+                'type' => $annotation->type,
+                'text' => $annotation->text,
+                'map_x' => $annotation->map_x,
+                'map_y' => $annotation->map_y,
+                'width' => $annotation->width,
+                'height' => $annotation->height,
+                'color' => $annotation->color,
+                'z' => $annotation->z,
+            ])
+            ->values()
+            ->all();
+    }
+
+    /**
+     * The VLAN ids carried by each device of this site, keyed by device. Read in
+     * one query rather than through the ports so that a site with a few thousand
+     * ports still renders its map without a fuss.
+     *
+     * @return array<int, list<int>>
+     */
+    private function deviceVlans(Site $site): array
+    {
+        $rows = DB::table('port_vlan')
+            ->join('ports', 'ports.id', '=', 'port_vlan.port_id')
+            ->join('vlans', 'vlans.id', '=', 'port_vlan.vlan_id')
+            ->join('devices', 'devices.id', '=', 'ports.device_id')
+            ->where('devices.site_id', $site->id)
+            ->distinct()
+            ->orderBy('vlans.vid')
+            ->get(['ports.device_id as device_id', 'vlans.vid as vid']);
+
+        $vlans = [];
+
+        foreach ($rows as $row) {
+            $vlans[(int) $row->device_id][] = (int) $row->vid;
+        }
+
+        return $vlans;
     }
 
     /**

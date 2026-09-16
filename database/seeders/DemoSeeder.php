@@ -6,6 +6,7 @@ use App\Actions\CreatePortsFromModel;
 use App\Models\Cable;
 use App\Models\Device;
 use App\Models\DeviceModel;
+use App\Models\MapAnnotation;
 use App\Models\Outlet;
 use App\Models\Port;
 use App\Models\Rack;
@@ -64,6 +65,7 @@ class DemoSeeder extends Seeder
         $this->cabling();
         $this->tunnels();
         $this->subnets();
+        $this->drawings();
 
         Auth::logout();
     }
@@ -457,6 +459,47 @@ class DemoSeeder extends Seeder
                     'site_b_id' => $this->sites[$b]->id,
                 ],
                 ['type' => $type, 'status' => $status],
+            );
+        }
+    }
+
+    /**
+     * What the diagram cannot say on its own: the campus frame on the global
+     * map, and a zone plus a note on the northern site's own map.
+     */
+    private function drawings(): void
+    {
+        // The global map: the campus the two complexes share, and the warning
+        // that goes with the cottage link.
+        $this->draw(null, [
+            ['zone', 'Кампус — общий VLAN-план', 190, 150, 470, 230, '#0284c7'],
+            ['note', "Коттедж включён по IPsec.\nКанал резервный, падает в грозу.", 700, 90, 240, 110, '#d97706'],
+        ]);
+
+        $this->draw($this->sites['NORTH'], [
+            ['zone', 'Ядро сети (Стойка A)', 70, 55, 1240, 200, '#0284c7'],
+            ['note', 'Оптика на второй корпус идёт через SW-N-OPT.', 80, 470, 300, 110, null],
+        ]);
+    }
+
+    /**
+     * @param  list<array{string, string, int, int, int, int, string|null}>  $drawings
+     */
+    private function draw(?Site $site, array $drawings): void
+    {
+        foreach ($drawings as [$type, $text, $x, $y, $width, $height, $color]) {
+            MapAnnotation::firstOrCreate(
+                ['site_id' => $site?->id, 'text' => $text],
+                [
+                    'type' => $type,
+                    'map_x' => $x,
+                    'map_y' => $y,
+                    'width' => $width,
+                    'height' => $height,
+                    'color' => $color,
+                    // Notes read on top of the zones they annotate.
+                    'z' => $type === 'note' ? 1 : 0,
+                ],
             );
         }
     }

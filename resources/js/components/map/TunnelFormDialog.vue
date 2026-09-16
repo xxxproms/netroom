@@ -21,6 +21,9 @@ defineProps<{
     sites: MapSite[];
     types: string[];
     statuses: string[];
+    /** When drawn on the canvas, the two ends are handed in preselected. */
+    presetA?: number | null;
+    presetB?: number | null;
 }>();
 
 const open = defineModel<boolean>('open', { required: true });
@@ -57,6 +60,7 @@ const open = defineModel<boolean>('open', { required: true });
                                 v-for="site in sites"
                                 :key="site.id"
                                 :value="site.id"
+                                :selected="site.id === presetA"
                             >
                                 {{ site.name }}
                             </option>
@@ -78,6 +82,7 @@ const open = defineModel<boolean>('open', { required: true });
                                 v-for="site in sites"
                                 :key="site.id"
                                 :value="site.id"
+                                :selected="site.id === presetB"
                             >
                                 {{ site.name }}
                             </option>

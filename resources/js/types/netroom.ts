@@ -269,6 +269,7 @@ export type MapSite = {
     map_y: number | null;
     rooms_count: number;
     devices_count: number;
+    vlan_domain: string | null;
 };
 
 export type Tunnel = {
@@ -287,9 +288,14 @@ export type MapDevice = {
     name: string;
     kind: string;
     model: string;
+    status: string;
+    ports_count: number;
+    mgmt_ip: string | null;
     color: string | null;
     map_x: number | null;
     map_y: number | null;
+    rack: { id: number; name: string } | null;
+    vlans: number[];
 };
 
 export type MapLink = {
@@ -299,6 +305,20 @@ export type MapLink = {
     media: string;
     strands: number | null;
     label: string | null;
+};
+
+export type MapAnnotationType = 'zone' | 'note';
+
+export type MapAnnotation = {
+    id: number;
+    type: MapAnnotationType;
+    text: string | null;
+    map_x: number;
+    map_y: number;
+    width: number;
+    height: number;
+    color: string | null;
+    z: number;
 };
 
 export type SubnetSummary = {

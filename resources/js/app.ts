@@ -1,4 +1,9 @@
 import { createInertiaApp } from '@inertiajs/vue3';
+import '@vue-flow/core/dist/style.css';
+import '@vue-flow/core/dist/theme-default.css';
+import '@vue-flow/controls/dist/style.css';
+import '@vue-flow/minimap/dist/style.css';
+import '@vue-flow/node-resizer/dist/style.css';
 import { initializeTheme } from '@/composables/useAppearance';
 import { i18n, setLocale } from '@/i18n';
 import AppLayout from '@/layouts/AppLayout.vue';

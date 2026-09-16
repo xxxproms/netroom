@@ -71,6 +71,16 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('map/sites/{site}', [NetworkMapController::class, 'site'])->name('map.site');
     Route::patch('map/sites/{site}/position', [NetworkMapController::class, 'moveSite'])->name('map.sites.move');
     Route::patch('map/devices/{device}/position', [NetworkMapController::class, 'moveDevice'])->name('map.devices.move');
+    Route::patch('map/sites/{site}/style', [NetworkMapController::class, 'styleSite'])->name('map.sites.style');
+    Route::patch('map/devices/{device}/style', [NetworkMapController::class, 'styleDevice'])->name('map.devices.style');
+    Route::patch('map/positions', [NetworkMapController::class, 'positions'])->name('map.positions');
+
+    Route::post('map/annotations', [NetworkMapController::class, 'storeAnnotation'])
+        ->name('map.annotations.store');
+    Route::patch('map/annotations/{annotation}', [NetworkMapController::class, 'updateAnnotation'])
+        ->name('map.annotations.update');
+    Route::delete('map/annotations/{annotation}', [NetworkMapController::class, 'destroyAnnotation'])
+        ->name('map.annotations.destroy');
 
     Route::post('tunnels', [TunnelController::class, 'store'])->name('tunnels.store');
     Route::patch('tunnels/{tunnel}', [TunnelController::class, 'update'])->name('tunnels.update');

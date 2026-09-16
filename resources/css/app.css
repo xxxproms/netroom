@@ -170,3 +170,180 @@
         @apply bg-background text-foreground;
     }
 }
+
+/* Vue Flow (network map) — theme the canvas chrome for light and dark alike. */
+.map-canvas .vue-flow__controls {
+    box-shadow: 0 1px 3px rgb(0 0 0 / 0.12);
+    border-radius: 0.5rem;
+    overflow: hidden;
+}
+.map-canvas .vue-flow__controls-button {
+    background: var(--card);
+    border-bottom: 1px solid var(--border);
+    fill: var(--foreground);
+}
+.map-canvas .vue-flow__controls-button:hover {
+    background: var(--accent);
+}
+.map-canvas .vue-flow__minimap {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 0.5rem;
+}
+.map-canvas .vue-flow__minimap-mask {
+    fill: color-mix(in oklab, var(--muted-foreground) 18%, transparent);
+}
+.map-canvas .vue-flow__edge-path {
+    transition: stroke 0.15s ease;
+}
+
+/*
+ * A zone is a backdrop drawn behind the kit it frames, so its body lets the
+ * pointer through (set inline on the node — Vue Flow writes pointer-events
+ * there itself) and only its title bar and resize handles take the mouse.
+ */
+.map-canvas .vue-flow__node-zone .zone-handle,
+.map-canvas .vue-flow__node-zone .vue-flow__resize-control {
+    pointer-events: all;
+}
+
+/*
+ * Narrowing the map: what the search, the filters or a trace singled out keeps
+ * its colour, everything else steps back rather than disappearing — a diagram
+ * that hides half its kit stops being a map of the network.
+ */
+.map-canvas .vue-flow__node.map-dim,
+.map-canvas .vue-flow__edge.map-dim {
+    opacity: 0.16;
+    filter: grayscale(1);
+    transition:
+        opacity 0.15s ease,
+        filter 0.15s ease;
+}
+.map-canvas .vue-flow__edge.map-lit .vue-flow__edge-path {
+    stroke-width: 4;
+}
+.map-canvas .vue-flow__node.map-flash {
+    animation: map-flash 2s ease-out;
+    border-radius: 0.75rem;
+}
+
+@keyframes map-flash {
+    0%,
+    60% {
+        box-shadow: 0 0 0 4px var(--primary);
+    }
+    100% {
+        box-shadow: 0 0 0 0 transparent;
+    }
+}
+
+/*
+ * The printed sheet. It is teleported to the body and stays out of the way on
+ * screen; printing hides the panel around it and lets it have the paper to
+ * itself. Colours are forced through so the legend does not print as grey.
+ */
+.map-print-sheet {
+    display: none;
+}
+
+@media print {
+    body.map-printing > *:not(.map-print-sheet) {
+        display: none !important;
+    }
+
+    body.map-printing .map-print-sheet {
+        display: flex;
+        flex-direction: column;
+        gap: 4mm;
+        height: 100%;
+        color: #000;
+        background: #fff;
+        font-size: 9pt;
+        print-color-adjust: exact;
+        -webkit-print-color-adjust: exact;
+    }
+
+    .map-print-frame {
+        flex: 1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 0;
+        padding: 3mm;
+        border: 0.6mm solid #000;
+    }
+
+    .map-print-image {
+        max-width: 100%;
+        max-height: 100%;
+        object-fit: contain;
+    }
+
+    .map-print-block {
+        display: grid;
+        grid-template-columns: 1fr 1.4fr 1fr;
+        gap: 4mm;
+        padding: 3mm 4mm;
+        border: 0.6mm solid #000;
+    }
+
+    .map-print-title {
+        font-size: 12pt;
+        font-weight: 700;
+    }
+
+    .map-print-subtitle {
+        color: #444;
+    }
+
+    .map-print-legend {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 1mm 4mm;
+        align-content: start;
+    }
+
+    .map-print-legend span {
+        display: inline-flex;
+        align-items: center;
+        gap: 1.5mm;
+    }
+
+    .map-print-dot {
+        width: 2.5mm;
+        height: 2.5mm;
+        border-radius: 50%;
+    }
+
+    .map-print-zone {
+        width: 3mm;
+        height: 3mm;
+        border: 0.5mm dashed;
+        border-radius: 0.5mm;
+    }
+
+    .map-print-meta {
+        display: grid;
+        grid-template-columns: auto 1fr;
+        gap: 0.5mm 3mm;
+        align-content: start;
+    }
+
+    .map-print-meta dt {
+        color: #444;
+    }
+}
+
+/* A map that is moving is a map that is hard to read for some people. */
+@media (prefers-reduced-motion: reduce) {
+    .map-canvas .vue-flow__node.map-flash {
+        animation: none;
+        box-shadow: 0 0 0 4px var(--primary);
+    }
+
+    .map-canvas .vue-flow__node.map-dim,
+    .map-canvas .vue-flow__edge.map-dim {
+        transition: none;
+    }
+}
